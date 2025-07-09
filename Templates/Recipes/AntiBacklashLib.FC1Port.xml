@@ -1,0 +1,52 @@
+<Model Name="AntiBacklashLib.FC1Port">
+  <BaseModel>VaconLib.VaconMarineAppFCPort</BaseModel>
+  <ModelTypeClass>XML</ModelTypeClass>
+
+  <Attributes>
+    <Attribute Name="Input" Value="0"></Attribute>
+    <Attribute Name="Model" Value="AntiBacklashLib.FC1Port"></Attribute>
+  </Attributes>
+
+  <Connections>
+
+    <Connection Name="MapEnable" Input="0"></Connection>
+    
+
+    <Connection Name="MapModeSelect" Input="0"></Connection>
+    
+
+    <Connection Name="MapSpeedRef" Input="0"></Connection>
+    
+
+    <Connection Name="MapTorqueRef" Input="0"></Connection>
+    
+
+    <Connection Name="MapTorqueLimitMotoring" Input="0"></Connection>
+    
+
+    <Connection Name="MapTorqueLimitGeneratoring" Input="0"></Connection>
+    
+
+    <Connection Name="MapPowerLimitMotoring" Input="0"></Connection>
+    
+
+    <Connection Name="MapPowerLimitGeneratoring" Input="0"></Connection>
+    
+
+    <Connection Name="MapLoadDrooping" Input="0"></Connection>
+    
+
+    <Connection Name="MapMasterFollowerMode" Input="0"></Connection>
+    
+
+    <Connection Name="MapStatusFlags" Input="1"></Connection>
+    
+
+    <Connection Name="MapSpeedActual" Input="1"></Connection>
+    
+
+    <Connection Name="MapTorqueActual" Input="1"></Connection>
+    
+  </Connections>
+
+</Model>

@@ -1,0 +1,34 @@
+<Model Name="AntiBacklashLib.VaconFC1">
+  <BaseModel>VaconLib.VaconMarineAppFC</BaseModel>
+  <ModelTypeClass>XML</ModelTypeClass>
+
+  <Attributes>
+    <Attribute Name="Description" Value="Interfaces a Vacon FC with Marine Application, using OPT-C6 CANopen option board."></Attribute>
+    <Attribute Name="Model" Value="AntiBacklashLib.VaconFC1"></Attribute>
+  </Attributes>
+  <Element Description="Name of CAN node. Must be specified if different from component shortname." Model="PropertyAsElement" Name="NodeName" Required="1" Value="FC1"></Element>
+
+  <Ports>
+
+    <Port Name="Drive" Routing="AntiBacklashApp.AntiBacklashController.FC1"></Port>
+    
+    <Port Model="VaconLib.FCIOPort" Name="FCIOPort" Routing="AntiBacklashApp.CANOpenPCIIOServer.FC1"></Port>
+  </Ports>
+
+  <Parameters>
+    <Parameter Model="CDPParameter" Name="MotorNomSpeed" Value="1400"></Parameter>
+    <Parameter Model="CDPParameter" Name="MotorNomCurrent" Value="2.6200000000000001066"></Parameter>
+    <Parameter Model="CDPParameter" Name="MotorNomPower" Value="0.55000000000000004441"></Parameter>
+    <Parameter Model="CDPParameter" Name="MotorNomCosPhi" Value="0.73999999999999999112"></Parameter>
+    <Parameter Model="CDPParameter" Name="MotorNomTorque" Value="3.75"></Parameter>
+    <Parameter Model="CDPParameter" Name="MotorMaxSpeed" Value="146"></Parameter>
+    <Parameter Model="CDPParameter" Name="IgnoreAFEStatus" Value="1"></Parameter>
+  </Parameters>
+
+  <Connectors>
+
+    <Connector Name="CANopenIOServer" Object="AntiBacklashApp.CANOpenPCIIOServer"></Connector>
+    
+  </Connectors>
+
+</Model>

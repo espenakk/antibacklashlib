@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Model Name="AntiBacklashLib.EncoderPort">
+ <ModelTypeClass>C++</ModelTypeClass>
+ <BaseModel>CDPPort</BaseModel>
+ <Attributes>
+  <Attribute Name="Description" Type="string" Value="Simple CANOpen encoder port"></Attribute>
+  <Attribute Description="Implementation model used." Name="Model" ReadOnly="1" Required="1" SaveOnChange="0" Type="string" Value="AntiBacklashLib.EncoderPort"></Attribute>
+  <Attribute LogEventOnChange="0" Name="position" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"></Attribute></Attributes>
+ <Connections>
+  <Connection Input="1" LocalName=".position" Model="CDPPortConnection" Name="Mapposition"></Connection>
+ </Connections>
+  <Element Description="Valid when TypeHint is RoutingType. When set indicates that the object with its routing set is used to push data instead of pulling as is default for routings." EnableIf="Node.type=Model" Model="PropertyAsElement" Name="RoutingType" Selection=";Push;Pull" TypeHint="Selection" Value="Push"></Element>
+</Model>

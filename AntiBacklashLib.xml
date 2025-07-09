@@ -1,0 +1,10 @@
+<Library Name="AntiBacklashLib">
+ <Models>
+  <Model Name="AntiBacklashLib.AntiBacklashController"/>
+  <Model Name="AntiBacklashLib.EncoderPort"/>
+  <Model Name="AntiBacklashLib.FC1Node"/>
+  <Model Name="AntiBacklashLib.FC1Port"/>
+  <Model Name="AntiBacklashLib.KublerF5888"/>
+  <Model Name="AntiBacklashLib.VaconFC1"/>
+ </Models>
+</Library>
