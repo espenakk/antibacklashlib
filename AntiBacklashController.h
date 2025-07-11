@@ -23,13 +23,15 @@ public:
     void Configure(const char* componentXML) override;
     void ProcessNull() override;
 
+    void antibacklashTestScript(double t, int speedNoLoad, int speedLoad);
+    void debugMode();
 protected:
     VaconLib::VaconMarineAppFCPort FC1;
     VaconLib::VaconMarineAppFCPort FC2;
     VaconLib::VaconMarineAppFCPort FC3;
     EncoderPort ENC1;
     CDPParameter preload_torque;
-    CDPParameter velocity_deadzone;
+
     CDPParameter userVelocityCmdA;
     CDPParameter userVelocityCmdB;
     CDPParameter userVelocityCmdC;
@@ -40,18 +42,14 @@ protected:
     CDPParameter antiBacklashEnabled;
     CDPSignal<bool> dirC;
 
-    double positionSP;
-    double kp_;
-    double ki_;
-    double kd_;
+    CDPTimer timer;
+    CDPSignal<double> elapsedTime;
+    CDPSignal<bool> startAntibacklashTestButton;
+    CDPSignal<bool> runningAntiBacklashTestScript;
+    CDPSignal<bool> exportData;
+    CDPSignal<int> scaledEncSpeed;
 
-    double output;
-    double error;
-    double proportional;
-    double integral;
-    double derivative;
-    double previousError;
-    double accumulatedError;
+    int encSpeedScaler();
 
     using CDPComponent::fs;
     using CDPComponent::requestedState;

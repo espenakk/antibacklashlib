@@ -21,6 +21,7 @@ DISTFILES += $$files(*.xml, true) \
     Templates/Recipes/AntiBacklashLib.FC1Node.xml \
     Templates/Recipes/AntiBacklashLib.FC1Port.xml \
     Templates/Recipes/AntiBacklashLib.KublerF5888.xml \
+    Templates/Recipes/AntiBacklashLib.KublerF5888_old.xml \
     Templates/Recipes/AntiBacklashLib.VaconFC1.xml
 
 load(cdp)

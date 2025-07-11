@@ -1,4 +1,4 @@
-<Model Name="AntiBacklashLib.KublerF5888">
+<Model Name="AntiBacklashLib.KublerF5888_old">
   <BaseModel>CANOpenIOServer.MasterNode</BaseModel>
   <ModelTypeClass>XML</ModelTypeClass>
 
@@ -9,19 +9,12 @@
     <Attribute Name="UseSDODataSize" Value="1"></Attribute>
     <Attribute Name="Fs" Value="100"></Attribute>
     <Attribute Name="Description" Value="Kübler F5888"></Attribute>
-    <Attribute Name="Model" Value="AntiBacklashLib.KublerF5888"></Attribute>
+    <Attribute Name="Model" Value="AntiBacklashLib.KublerF5888_old"></Attribute>
   </Attributes>
-  <TPDO Model="CANOpenMaster.TPDO" Name="TPDO1" Description="Position scaled according to Operating Parameters">
-    <CDPChannel Model="CDPSignalChannel&lt;unsigned int&gt;" Name="Position" Description="Position value"></CDPChannel></TPDO>
-  <TPDO Model="CANOpenMaster.TPDO" Name="TPDO3" Nr="3" Description="Speed in RPM">
-    <CDPChannel Model="CDPSignalChannel&lt;short&gt;" Name="Speed"></CDPChannel></TPDO>
 
   <ObjectDictionary>
     <Entry Model="CANOpenIOServer.HeartbeatPTimeODEntry" Name="HeartbeatPTimeODEntry" Value="200"></Entry>
     <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="Operating Parameters" Value="4" Index="24576" DataType="unsigned short" Description="Bit 0 (0x1): CW/CCW, Bit 2 (0x4): Scaling off/on, Bit 12 (0x1000): rpm / units/s. Note bit 12, not bit 13 on this encoder!"></Entry>
-    <Entry Model="CANOpenIOServer.CustomODEntry" Name="Speed Integration Time" Value="10" Index="24625" Subindex="2" DataType="unsigned short" Unit="ms" Description="Speed integration time in ms"></Entry>
-    <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="Speed calculation multiplier" Value="1" Index="24625" Subindex="3" DataType="unsigned short" Description="Speed signal is scaled up with this factor"></Entry>
-    <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="Speed calculation divisor" Value="1" Index="24625" Subindex="4" DataType="unsigned short" Description="Speed signal is scaled down with this factor"></Entry>
     <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="Measuring units per revolution" Value="8192" Index="24577" Description="Number of steps per revolution. Only valid if scaling is enabled by bit 2 in Operating Parameters, index 6000."></Entry>
     <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="Total number of measuring units" Value="33554432" Index="24578" Description="Total numer of steps in whole range (special case: 0=32 bit range=2^32)"></Entry>
     <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="TPDO1 disable" Value="2147484032" Index="6144" Subindex="1" AdjustWithNodeAddress="1" Description="Value=0x80000180 + nodenr = TPDO1 disable."></Entry>
@@ -29,17 +22,14 @@
     <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="TPDO3 disable" Value="2147484544" Index="6146" Subindex="1" AdjustWithNodeAddress="1" Description="Value=0x80000380 + nodenr = TPDO3 disable. "></Entry>
     <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="TPDO4 disable" Value="2147484800" Index="6147" Subindex="1" AdjustWithNodeAddress="1" Description="Value=0x80000380 + nodenr = TPDO3 disable. "></Entry>
     <Entry Model="CANOpenIOServer.CustomODEntry" Name="TPDO1 Clear number of entries" Index="6656" DataType="unsigned char" Description="Set nr entries for TPDO1 to 0 before changing PDO mapping"></Entry>
-    <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="TPDO1 mapping (pos)" Value="1610874912" Index="6656" Subindex="1" Description="Mapping TPDO1, Object 6004, Subindex 0, position value, data size 32-bit"></Entry>
+    <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="TPDO1 mapping 1 (pos)" Value="1610874912" Index="6656" Subindex="1" Description="Mapping TPDO1, Object 6004, Subindex 0, position value, data size 32-bit"></Entry>
     <Entry Model="CANOpenIOServer.CustomODEntry" Name="TPDO1 Set number of entries" Value="1" Index="6656" DataType="unsigned char" Description="Set number of mapped objects after mapping is finished"></Entry>
     <Entry Model="CANOpenIOServer.CustomODEntry" Name=" TPDO1 transmission type" Value="1" Index="6144" Subindex="2" DataType="unsigned char" Description="Send TPDO1 with every SYNC"></Entry>
     <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="TPDO1 - COB-ID" Value="384" Index="6144" Subindex="1" AdjustWithNodeAddress="1" Description="TPDO1 enable"></Entry>
-    <Entry Model="CANOpenIOServer.CustomODEntry" Name="TPDO3 Clear number of entries" Index="6658" DataType="unsigned char" Description="Set nr entries for TPDO1 to 0 before changing PDO mapping"></Entry>
-    <Entry DataType="int" Description="Mapping TPDO2, Object 6030, Subindex 1, speed, data size 16-bit" Index="6658" Model="CANOpenIOServer.CustomHexODEntry" Name="TPDO3 mapping (speed)" Subindex="1" Value="1613758736"></Entry>
-    <Entry Model="CANOpenIOServer.CustomODEntry" Name="TPDO3 Set number of entries" Value="1" Index="6658" DataType="unsigned char" Description="Set number of mapped objects after mapping is finished"></Entry>
-    <Entry Model="CANOpenIOServer.CustomODEntry" Name=" TPDO3 transmission type" Value="1" Index="6146" Subindex="2" DataType="unsigned char" Description="Send TPDO3 with every SYNC"></Entry>
-    <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="TPDO3 - COB-ID" Value="896" Index="6146" Subindex="1" AdjustWithNodeAddress="1" Description="TPDO3 enable"></Entry>
     <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="Can-Bus Termination" Index="8450" DataType="unsigned char"></Entry>
-    <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="Save All Bus Parameters" Value="1702257011" Index="8453"></Entry>
-  </ObjectDictionary>
+    <Entry Model="CANOpenIOServer.CustomHexODEntry" Name="Save All Bus Parameters" Value="1702257011" Index="8453"></Entry></ObjectDictionary>
+  
+  <TPDO Model="CANOpenMaster.TPDO" Name="TPDO1" Description="Position scaled according to Operating Parameters">
+    <CDPChannel Model="CDPSignalChannel&lt;unsigned int&gt;" Name="Position" Description="Position value"></CDPChannel></TPDO>
 
 </Model>

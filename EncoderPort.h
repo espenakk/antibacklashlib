@@ -10,8 +10,8 @@ class EncoderPort : public CDPPort
 {
 public:
     void Create(const char* shortName, CDPComponent* parent) override;
-
-    CDPProperty<double> position;
+    CDPProperty<unsigned int> position;
+    CDPProperty<short> speed;
 };
 
 } // namespace AntiBacklashLib

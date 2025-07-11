@@ -18,4 +18,5 @@ void EncoderPort::Create(const char* shortName, CDPComponent* parent)
 {
     CDPPort::Create(shortName, parent);
     position.Create("position", this);
+    speed.Create("speed", this);
 }
