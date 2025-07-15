@@ -1,4 +1,6 @@
 #include "AntiBacklashController.h"
+#include <iostream>
+#include <math.h>
 
 using namespace AntiBacklashLib;
 /*!
@@ -37,17 +39,16 @@ AntiBacklashController::~AntiBacklashController()
 void AntiBacklashController::Create(const char* fullName)
 {
     CDPComponent::Create(fullName);
+    debugMode.Create("debugMode",this);
+    speedCmdA.Create("speedCmdA",this);
+    speedCmdB.Create("speedCmdB",this);
+    speedCmdC.Create("speedCmdC",this);
     FC1.Create("FC1",this);
     FC2.Create("FC2",this);
     FC3.Create("FC3",this);
     ENC1.Create("ENC1",this);
-    preload_torque.Create("preload_torque",this);
-    userVelocityCmdA.Create("userVelocityCmdA",this);
-    userVelocityCmdB.Create("userVelocityCmdB",this);
-    userVelocityCmdC.Create("userVelocityCmdC",this);
     enabled.Create("enabled",this);
     loadEnabled.Create("loadEnabled",this);
-    loadTorqueLimit.Create("loadTorqueLimit",this);
     dir.Create("dir",this);
     antiBacklashEnabled.Create("antiBacklashEnabled",this);
     dirC.Create("dirC",this);
@@ -70,6 +71,12 @@ void AntiBacklashController::CreateModel()
     CDPComponent::CreateModel();
 
     RegisterStateProcess("Null", (CDPCOMPONENT_STATEPROCESS) &AntiBacklashController::ProcessNull, "Initial Null state");
+    RegisterStateProcess("Debug",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessDebug,"");
+    RegisterStateProcess("Running",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessRunning,"");
+    RegisterStateTransitionHandler("Null","Debug",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToDebug,"");
+    RegisterStateTransitionHandler("Debug","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionDebugToNull,"");
+    RegisterStateTransitionHandler("Null","Running",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToRunning,"");
+    RegisterStateTransitionHandler("Running","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionRunningToNull,"");
 }
 
 /*!
@@ -98,6 +105,125 @@ void AntiBacklashController::Configure(const char* componentXML)
 */
 void AntiBacklashController::ProcessNull()
 {
+    elapsedTime = 0.0;
+    if (debugMode) {
+        requestedState = "Debug";
+    }
+    if (startAntibacklashTestButton) {
+        requestedState = "Running";
+    }
+}
+
+
+
+void AntiBacklashController::ProcessDebug()
+{
+    if (!debugMode) {
+        requestedState = "Null";
+    }
+    elapsedTime = 42.0;
+    scaledEncSpeed = encSpeedScaler();
+    FC1.SpeedRef = speedCmdA;
+    FC2.SpeedRef = speedCmdB;
+    FC3.SpeedRef = speedCmdC;
+    FC3.TorqueLimitGeneratoring = 10;
+    FC3.TorqueLimitMotoring = 10;
+
+    FC1.TorqueLimitGeneratoring = 10;
+    FC1.TorqueLimitMotoring = 10;
+    FC2.TorqueLimitGeneratoring = 10;
+    FC2.TorqueLimitMotoring = 10;
+
+    if (enabled) {
+        FC1.Enable = true;
+        FC2.Enable = true;
+    } else {
+        FC1.Enable = false;
+        FC2.Enable = false;
+    }
+
+    if (loadEnabled) {
+        FC3.Enable = true;
+    } else {
+        FC3.Enable = false;
+    }
+
+    if (dir) { //Motor A is Master
+        FC1.TorqueLimitGeneratoring = 10;
+        FC1.TorqueLimitMotoring = 10;
+        FC2.TorqueLimitGeneratoring = 0.2;
+        FC2.TorqueLimitMotoring = 0.2;
+
+    } else { //Motor B is Master
+        FC2.TorqueLimitGeneratoring = 10;
+        FC2.TorqueLimitMotoring = 10;
+        FC1.TorqueLimitGeneratoring = 0.2;
+        FC1.TorqueLimitMotoring = 0.2;
+    }
+}
+
+
+
+void AntiBacklashController::ProcessRunning()
+{
+    if (!timer.IsRunning()) {
+        timer.Start();
+    }
+    elapsedTime = timer.TimeElapsed();
+    scaledEncSpeed = encSpeedScaler();
+    // antibacklashTestScript(elapsedTime, 20, 30);
+    TestScriptPos();
+}
+
+
+
+bool AntiBacklashController::TransitionNullToDebug()
+{
+    if(requestedState=="Debug") {
+        InitFC(false, false, false);
+        return true;
+    }
+    else
+        return false;
+}
+
+
+
+bool AntiBacklashController::TransitionDebugToNull()
+{
+    if(requestedState=="Null") {
+        InitFC(false, false, false);
+        return true;
+    }
+    else
+        return false;
+}
+
+
+
+bool AntiBacklashController::TransitionNullToRunning()
+{
+    if(requestedState=="Running") {
+        InitFC(true, true, false);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+bool AntiBacklashController::TransitionRunningToNull()
+{
+    if(requestedState=="Null") {
+        InitFC(false, false, false);
+        return true;
+    }
+    else
+        return false;
+}
+
+void AntiBacklashController::InitFC(bool FC1Enable=false, bool FC2Enable=false, bool FC3Enable=false) {
+    // Power limit at 100%
     FC1.PowerLimitGeneratoring = 100;
     FC1.PowerLimitMotoring = 100;
     FC2.PowerLimitGeneratoring = 100;
@@ -105,39 +231,205 @@ void AntiBacklashController::ProcessNull()
     FC3.PowerLimitGeneratoring = 100;
     FC3.PowerLimitMotoring = 100;
 
+    // Closed loop speed control
     FC1.ModeSelect = 3;
     FC2.ModeSelect = 3;
     FC3.ModeSelect = 3;
 
-    scaledEncSpeed = encSpeedScaler();
+    FC1.Enable = FC1Enable;
+    FC2.Enable = FC2Enable;
+    FC3.Enable = FC3Enable;
+}
 
-    if (startAntibacklashTestButton || runningAntiBacklashTestScript) {
+// go from encoder reading to single turn position in degrees
+double AntiBacklashController::EncoderRawToDeg_F5888(const EncoderPort& rawEnc) {
+    const double kDegPerCount = 360.0 / 8192;
+    return static_cast<double>(rawEnc.position) * kDegPerCount;
+}
 
-        runningAntiBacklashTestScript = true;
-        FC1.Enable = FC2.Enable = FC3.Enable = true;
+void AntiBacklashController::StopAll() {
+    FC1.SpeedRef = FC2.SpeedRef = 0;
+    FC1.TorqueLimitMotoring = FC2.TorqueLimitMotoring = 0;
+    FC1.TorqueLimitGeneratoring = FC2.TorqueLimitGeneratoring = 0;
+}
 
-        if (!timer.IsRunning()) {
-            timer.Start();
-        }
-        elapsedTime = timer.TimeElapsed();
+VaconLib::VaconMarineAppFCPort* AntiBacklashController::ChooseDir(double errorDeg, double speed) {
+    if (errorDeg > 0) {
+        FC1.SpeedRef  = FC2.SpeedRef = speed;
+        FC1.TorqueLimitMotoring = FC1.TorqueLimitGeneratoring = 10;
 
-        // tests to run:
-        //  run forward without load -> change dir
-        //  run backwards without load -> change dir
-        //  run forward with load -> change dir
-        //  run backwards with load -> change dir
-        //  activate backlash and redo
-        antibacklashTestScript(elapsedTime, 20, 30);
-
+        // FC2.SpeedRef = 0;
+        FC2.TorqueLimitMotoring = FC2.TorqueLimitGeneratoring = 0;
+        return &FC2;
     } else {
-        elapsedTime = 0.0;
-        debugMode();
+        // FC1.SpeedRef = 0;
+        FC1.TorqueLimitMotoring = FC1.TorqueLimitGeneratoring = 0;
+
+        FC2.SpeedRef = FC1.SpeedRef = speed;
+        FC2.TorqueLimitMotoring = FC2.TorqueLimitGeneratoring = 10;
+        return &FC1;
     }
 }
 
+// move to a given position in degrees
+void AntiBacklashController::MoveToPos(double targetDeg, bool antiBacklashEnabled, bool loadEnabled) {
+    // defines FC1 pos dir and FC2 neg dir
 
+    double currentDeg = EncoderRawToDeg_F5888(ENC1);
+    double errorDeg = targetDeg - currentDeg;
+    double speed = SpeedController(errorDeg);
 
-void AntiBacklashController::antibacklashTestScript(double t, int speedNoLoad = 15, int speedLoad = 20) {
+    // if (abs(errorDeg) <= degMargin) {
+    //     StopAll();
+    //     return;
+    // }
+
+    VaconLib::VaconMarineAppFCPort* slave = ChooseDir(errorDeg, speed);
+
+    bool allowPreload = antiBacklashEnabled && (abs(speed) < velocityDeadzone || velocityDeadzone == 0);
+    ApplyPreload(*slave, allowPreload);
+
+    if (loadEnabled) {
+        FC3.Enable = true;
+        FC3.SpeedRef = 0.0; // mulig å få fjernet denne på et vis?
+        FC3.TorqueLimitMotoring = FC3.TorqueLimitGeneratoring = loadTorLim;
+    } else {
+        FC3.Enable = false;
+    }
+}
+
+double AntiBacklashController::SpeedController(double errorDeg) {
+    const double maxSpeed = 2.0 * M_PI / 5;
+    const double minSpeed = 2.0 * M_PI / 20;
+    const double slowdownRange = 50.0;
+
+    double absError = abs(errorDeg);
+
+    if (absError <= degMargin)
+        return 0.0;
+
+    double speed = maxSpeed;
+
+    if (absError < slowdownRange) {
+        speed = minSpeed + (maxSpeed - minSpeed) * (absError / slowdownRange);
+    }
+
+    return speed;
+}
+
+double AntiBacklashController::PIController(double errorDeg) {
+
+    static double integral = 0;
+    static double prevTime = PITimer.TimeElapsed();
+
+    const double Kp = 0.3;
+    const double Ki = 0.03;
+
+    if (abs(errorDeg) <= degMargin) {
+        integral = 0;
+        return 0.0;
+    }
+
+    double currentTime = PITimer.TimeElapsed();
+    double dt = currentTime - prevTime;
+    prevTime = currentTime;
+    if (dt <= 0.0 || dt > 0.5) dt = 0.01;
+
+    integral += errorDeg * dt;
+
+    const double maxIntegral = 50.0;
+    if (integral > maxIntegral) integral = maxIntegral;
+    if (integral < -maxIntegral) integral = -maxIntegral;
+
+    double speedCmd = Kp * errorDeg + Ki * integral;
+
+    const double maxSpeed = 2.0 * M_PI / 15;
+    if (speedCmd > maxSpeed) speedCmd = maxSpeed;
+    if (speedCmd < 0) speedCmd = 0;
+
+    std::cout << "dt: " << dt << std::endl;
+    std::cout << "integral: " << integral << std::endl;
+    std::cout << "Speed ref: " << speedCmd << std::endl;
+
+    return speedCmd;
+}
+
+void AntiBacklashController::ApplyPreload(VaconLib::VaconMarineAppFCPort& slave, bool enablePreload) {
+    if (enablePreload) {
+        slave.TorqueLimitGeneratoring = preloadTorque;
+        slave.TorqueLimitMotoring = preloadTorque;
+        // if (slave.GetNodeID() == FC1.GetNodeID()) {
+        //     slave.SpeedRef = FC2.SpeedRef;
+        // } else {
+        //     slave.SpeedRef = FC1.SpeedRef;
+        // }
+    } else {
+        // slave.TorqueLimitGeneratoring = 0;
+        // slave.TorqueLimitMotoring = 0;
+    }
+}
+
+void AntiBacklashController::TestScriptPos() {
+    static int testStep = 0;
+    static double targetDeg = 0.0;
+    static bool moveStarted = false;
+
+    if (!gotStartPos && ENC1.position > 0) {
+        startPos = EncoderRawToDeg_F5888(ENC1);
+        gotStartPos = true;
+    }
+
+    if (!gotStartPos) {return;}
+
+    if (!moveStarted) {
+        switch (testStep) {
+            case 0: targetDeg = EncoderRawToDeg_F5888(ENC1) + 360; break;
+            case 1: targetDeg = EncoderRawToDeg_F5888(ENC1) - 360; break;
+            case 2: targetDeg = EncoderRawToDeg_F5888(ENC1) + 360; break;
+            case 3: targetDeg = EncoderRawToDeg_F5888(ENC1) - 360; break;
+            case 4: antiBacklashEnabled = true; targetDeg = EncoderRawToDeg_F5888(ENC1) + 360; break;
+            case 5: targetDeg = EncoderRawToDeg_F5888(ENC1) - 360; break;
+            case 6: targetDeg = EncoderRawToDeg_F5888(ENC1) + 360; break;
+            case 7: targetDeg = EncoderRawToDeg_F5888(ENC1) - 360; break;
+            default:
+                StopAll();
+                testStep = 0;
+                requestedState = "Null";
+                antiBacklashEnabled = false;
+                moveStarted = false;
+                return;
+        }
+        moveStarted = true;
+    }
+
+    double currentDeg = EncoderRawToDeg_F5888(ENC1);
+    double error = targetDeg - currentDeg;
+
+    MoveToPos(targetDeg, antiBacklashEnabled, testStep >= 2 && (testStep % 2 == 1));
+
+    if (abs(error) < degMargin) {
+        testStep++;
+        moveStarted = false;
+    }
+
+    std::cout << "Step: " << testStep << "  Error: " << error << std::endl;
+}
+
+void AntiBacklashController::EncoderTest() {
+
+    if (!gotStartPos && ENC1.position > 0) {
+        startPos = EncoderRawToDeg_F5888(ENC1);
+        gotStartPos = true;
+    }
+
+    if (gotStartPos) {
+        double targetPos = startPos + 180.0;
+        std::cout << "Start pos: " << startPos << " -- " << "Target pos: " << targetPos << std::endl;
+        MoveToPos(targetPos, true, true);
+    }
+}
+
+void AntiBacklashController::antibacklashTestScript(double t, int speedNoLoad = 15, int speedLoad = 20) { // Old script
     int time_interval = (int)t / 5;
 
     switch (time_interval) {
@@ -263,51 +555,11 @@ void AntiBacklashController::antibacklashTestScript(double t, int speedNoLoad = 
             timer.Reset();
             FC1.Enable = FC2.Enable = FC3.Enable = false;
             antiBacklashEnabled = false;
-            runningAntiBacklashTestScript = false;
+            requestedState = "Null";
             break;
     }
 }
 
-
-
-void AntiBacklashController::debugMode() {
-    FC3.TorqueLimitGeneratoring = loadTorqueLimit.Value();
-    FC3.TorqueLimitMotoring = loadTorqueLimit.Value();
-
-    FC1.SpeedRef = userVelocityCmdA.Value();
-    FC2.SpeedRef = userVelocityCmdB.Value();
-    FC3.SpeedRef = userVelocityCmdC.Value();
-    FC3.TorqueLimitGeneratoring = 10;
-    FC3.TorqueLimitMotoring = 10;
-
-    if (enabled.Value()) {
-        FC1.Enable = true;
-        FC2.Enable = true;
-    } else {
-        FC1.Enable = false;
-        FC2.Enable = false;
-    }
-
-    if (loadEnabled.Value()) {
-        FC3.Enable = true;
-    } else {
-        FC3.Enable = false;
-    }
-
-    if (dir.Value()) { //Motor A is Master
-        FC1.TorqueLimitGeneratoring = 10;
-        FC1.TorqueLimitMotoring = 10;
-        FC2.TorqueLimitGeneratoring = preload_torque;
-        FC2.TorqueLimitMotoring = preload_torque;
-
-    } else { //Motor B is Master
-        FC2.TorqueLimitGeneratoring = 10;
-        FC2.TorqueLimitMotoring = 10;
-        FC1.TorqueLimitGeneratoring = preload_torque;
-        FC1.TorqueLimitMotoring = preload_torque;
-    }
-}
-
 int AntiBacklashController::encSpeedScaler() {
-    return ENC1.speed / 14;
+    return ENC1.speed / 10;
 }
