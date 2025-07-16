@@ -11,6 +11,11 @@
 
 namespace AntiBacklashLib {
 
+struct MasterSlave {
+    VaconLib::VaconMarineAppFCPort* master;
+    VaconLib::VaconMarineAppFCPort* slave;
+};
+
 class AntiBacklashController : public CDPComponent
 {
 public:
@@ -55,20 +60,25 @@ protected:
 
     double encSpeedScaler() { return double(ENC1.speed) / 9.549297; }
     double EncoderRawToDeg_F5888(const EncoderPort& rawEnc) { return static_cast<double>(rawEnc.position) * (360.0 / 65535); }
-    void InitFC(bool FC1Enable, bool FC2Enable, bool FC3Enable);
+    void initFC(VaconLib::VaconMarineAppFCPort& FC, bool enable);
     void StopAllMotors();
-    VaconLib::VaconMarineAppFCPort* ChooseSlave(double errorDeg, double speed);
+    MasterSlave ChooseMasterSlave(double errorDeg, double speed);
     double SpeedController(double errorDeg);
     void MoveToPos(double targetDeg, bool antiBacklashEnabled);
-    void ApplyPreload(VaconLib::VaconMarineAppFCPort& slave, bool enablePreload);
     
     double startPos;
     bool gotStartPos = false;
     double degMargin = 10.0;
-    double loadTorqueLimit = 2.0; //Nm
-    double preloadTorque = 0.15 * MAX_TORQUE; // 15% of rated torque(Nm)
-    double velocityDeadzone = 0.5; // rad/s
-    static constexpr double MAX_TORQUE = 10;
+
+    double preloadTorque = 0.15 * kMaxTorque; //Nm
+    double velocityDeadzone = 0.5; //rad/s
+
+    static constexpr double kLoadTorqueLimit = 2.0; //Nm
+    static constexpr double kMaxTorque = 10; //Nm
+
+    void setMasterSlaveTorque(MasterSlave roles, double masterTorque, double slaveTorque);
+    void enableLoad(VaconLib::VaconMarineAppFCPort& load, bool enable);
+    void enableMasterSlave(VaconLib::VaconMarineAppFCPort& master, VaconLib::VaconMarineAppFCPort& slave, bool enable);
 
 
     using CDPComponent::fs;
