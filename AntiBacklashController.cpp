@@ -54,6 +54,7 @@ void AntiBacklashController::Create(const char* fullName)
     dirC.Create("dirC",this);
     timer.Create("timer",this);
     elapsedTime.Create("elapsedTime",this);
+    scaledEncPosition.Create("scaledEncPosition",this);
     startAntibacklashTestButton.Create("startAntibacklashTestButton",this);
     runningAntiBacklashTestScript.Create("runningAntiBacklashTestScript",this);
     exportData.Create("exportData",this);
@@ -123,16 +124,17 @@ void AntiBacklashController::ProcessDebug()
     }
     elapsedTime = 42.0;
     scaledEncSpeed = encSpeedScaler();
+    scaledEncPosition = EncoderRawToDeg_F5888(ENC1);
     FC1.SpeedRef = speedCmdA;
     FC2.SpeedRef = speedCmdB;
     FC3.SpeedRef = speedCmdC;
-    FC3.TorqueLimitGeneratoring = 10;
-    FC3.TorqueLimitMotoring = 10;
+    FC3.TorqueLimitGeneratoring = MAX_TORQUE;
+    FC3.TorqueLimitMotoring = MAX_TORQUE;
 
-    FC1.TorqueLimitGeneratoring = 10;
-    FC1.TorqueLimitMotoring = 10;
-    FC2.TorqueLimitGeneratoring = 10;
-    FC2.TorqueLimitMotoring = 10;
+    FC1.TorqueLimitGeneratoring = MAX_TORQUE;
+    FC1.TorqueLimitMotoring = MAX_TORQUE;
+    FC2.TorqueLimitGeneratoring = MAX_TORQUE;
+    FC2.TorqueLimitMotoring = MAX_TORQUE;
 
     if (enabled) {
         FC1.Enable = true;
@@ -149,14 +151,14 @@ void AntiBacklashController::ProcessDebug()
     }
 
     if (dir) { //Motor A is Master
-        FC1.TorqueLimitGeneratoring = 10;
-        FC1.TorqueLimitMotoring = 10;
+        FC1.TorqueLimitGeneratoring = MAX_TORQUE;
+        FC1.TorqueLimitMotoring = MAX_TORQUE;
         FC2.TorqueLimitGeneratoring = 0.2;
         FC2.TorqueLimitMotoring = 0.2;
 
     } else { //Motor B is Master
-        FC2.TorqueLimitGeneratoring = 10;
-        FC2.TorqueLimitMotoring = 10;
+        FC2.TorqueLimitGeneratoring = MAX_TORQUE;
+        FC2.TorqueLimitMotoring = MAX_TORQUE;
         FC1.TorqueLimitGeneratoring = 0.2;
         FC1.TorqueLimitMotoring = 0.2;
     }
@@ -171,8 +173,56 @@ void AntiBacklashController::ProcessRunning()
     }
     elapsedTime = timer.TimeElapsed();
     scaledEncSpeed = encSpeedScaler();
-    // antibacklashTestScript(elapsedTime, 20, 30);
-    TestScriptPos();
+    scaledEncPosition = EncoderRawToDeg_F5888(ENC1);
+    static int testStep = 0;
+    static double targetDeg = 0.0;
+    static bool moveStarted = false;
+
+    if (!gotStartPos && ENC1.position > 0) {
+        startPos = EncoderRawToDeg_F5888(ENC1);
+        gotStartPos = true;
+    }
+
+    if (!gotStartPos) {return;}
+
+    if (!moveStarted) {
+        switch (testStep) {
+        // case 0: targetDeg = EncoderRawToDeg_F5888(ENC1) + 360; loadEnabled = false; break;
+        case 0: targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
+        case 1: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
+        case 2: targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
+        case 3: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
+        case 4: antiBacklashEnabled = true; targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
+        // case 4: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = false; break;
+        // case 5: targetDeg = EncoderRawToDeg_F5888(ENC1) - 450; loadEnabled = false; break;
+        case 5: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
+        case 6: preloadTorque = 0.25 * MAX_TORQUE; targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
+        case 7: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
+        case 8: preloadTorque = 0.35 * MAX_TORQUE; targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
+        case 9: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
+        case 10: preloadTorque = 0.45 * MAX_TORQUE; targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
+        case 11: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
+
+        default:
+            StopAllMotors();
+            testStep = 0;
+            requestedState = "Null";
+            antiBacklashEnabled = false;
+            moveStarted = false;
+            return;
+        }
+        moveStarted = true;
+    }
+
+    double currentDeg = EncoderRawToDeg_F5888(ENC1);
+    double error = targetDeg - currentDeg;
+
+    MoveToPos(targetDeg, antiBacklashEnabled);
+
+    if (abs(error) < degMargin) {
+        testStep++;
+        moveStarted = false;
+    }
 }
 
 
@@ -241,58 +291,49 @@ void AntiBacklashController::InitFC(bool FC1Enable=false, bool FC2Enable=false, 
     FC3.Enable = FC3Enable;
 }
 
-// go from encoder reading to single turn position in degrees
-double AntiBacklashController::EncoderRawToDeg_F5888(const EncoderPort& rawEnc) {
-    const double kDegPerCount = 360.0 / 8192;
-    return static_cast<double>(rawEnc.position) * kDegPerCount;
-}
-
-void AntiBacklashController::StopAll() {
+void AntiBacklashController::StopAllMotors() {
     FC1.SpeedRef = FC2.SpeedRef = 0;
     FC1.TorqueLimitMotoring = FC2.TorqueLimitMotoring = 0;
     FC1.TorqueLimitGeneratoring = FC2.TorqueLimitGeneratoring = 0;
 }
 
-VaconLib::VaconMarineAppFCPort* AntiBacklashController::ChooseDir(double errorDeg, double speed) {
+VaconLib::VaconMarineAppFCPort* AntiBacklashController::ChooseSlave(double errorDeg, double speed) {
     if (errorDeg > 0) {
         FC1.SpeedRef  = FC2.SpeedRef = speed;
-        FC1.TorqueLimitMotoring = FC1.TorqueLimitGeneratoring = 10;
+        FC1.TorqueLimitMotoring = FC1.TorqueLimitGeneratoring = MAX_TORQUE;
 
-        // FC2.SpeedRef = 0;
+        // FC2.SpeedRef = -speed;
         FC2.TorqueLimitMotoring = FC2.TorqueLimitGeneratoring = 0;
         return &FC2;
     } else {
-        // FC1.SpeedRef = 0;
+        // FC1.SpeedRef = -speed;
         FC1.TorqueLimitMotoring = FC1.TorqueLimitGeneratoring = 0;
 
         FC2.SpeedRef = FC1.SpeedRef = speed;
-        FC2.TorqueLimitMotoring = FC2.TorqueLimitGeneratoring = 10;
+        FC2.TorqueLimitMotoring = FC2.TorqueLimitGeneratoring = MAX_TORQUE;
         return &FC1;
     }
 }
 
 // move to a given position in degrees
-void AntiBacklashController::MoveToPos(double targetDeg, bool antiBacklashEnabled, bool loadEnabled) {
+void AntiBacklashController::MoveToPos(double targetDeg, bool antiBacklashEnabled) {
     // defines FC1 pos dir and FC2 neg dir
 
     double currentDeg = EncoderRawToDeg_F5888(ENC1);
     double errorDeg = targetDeg - currentDeg;
     double speed = SpeedController(errorDeg);
 
-    // if (abs(errorDeg) <= degMargin) {
-    //     StopAll();
-    //     return;
-    // }
+    VaconLib::VaconMarineAppFCPort* slave = ChooseSlave(errorDeg, speed);
 
-    VaconLib::VaconMarineAppFCPort* slave = ChooseDir(errorDeg, speed);
-
-    bool allowPreload = antiBacklashEnabled && (abs(speed) < velocityDeadzone || velocityDeadzone == 0);
+    // bool allowPreload = antiBacklashEnabled && (abs(speed) < velocityDeadzone || velocityDeadzone == 0);
+    bool allowPreload = antiBacklashEnabled && (abs(speed) < (2.0 * M_PI / 5));
+    // bool allowPreload = antiBacklashEnabled;
     ApplyPreload(*slave, allowPreload);
 
     if (loadEnabled) {
         FC3.Enable = true;
         FC3.SpeedRef = 0.0; // mulig å få fjernet denne på et vis?
-        FC3.TorqueLimitMotoring = FC3.TorqueLimitGeneratoring = loadTorLim;
+        FC3.TorqueLimitMotoring = FC3.TorqueLimitGeneratoring = loadTorqueLimit;
     } else {
         FC3.Enable = false;
     }
@@ -317,249 +358,9 @@ double AntiBacklashController::SpeedController(double errorDeg) {
     return speed;
 }
 
-double AntiBacklashController::PIController(double errorDeg) {
-
-    static double integral = 0;
-    static double prevTime = PITimer.TimeElapsed();
-
-    const double Kp = 0.3;
-    const double Ki = 0.03;
-
-    if (abs(errorDeg) <= degMargin) {
-        integral = 0;
-        return 0.0;
-    }
-
-    double currentTime = PITimer.TimeElapsed();
-    double dt = currentTime - prevTime;
-    prevTime = currentTime;
-    if (dt <= 0.0 || dt > 0.5) dt = 0.01;
-
-    integral += errorDeg * dt;
-
-    const double maxIntegral = 50.0;
-    if (integral > maxIntegral) integral = maxIntegral;
-    if (integral < -maxIntegral) integral = -maxIntegral;
-
-    double speedCmd = Kp * errorDeg + Ki * integral;
-
-    const double maxSpeed = 2.0 * M_PI / 15;
-    if (speedCmd > maxSpeed) speedCmd = maxSpeed;
-    if (speedCmd < 0) speedCmd = 0;
-
-    std::cout << "dt: " << dt << std::endl;
-    std::cout << "integral: " << integral << std::endl;
-    std::cout << "Speed ref: " << speedCmd << std::endl;
-
-    return speedCmd;
-}
-
 void AntiBacklashController::ApplyPreload(VaconLib::VaconMarineAppFCPort& slave, bool enablePreload) {
     if (enablePreload) {
         slave.TorqueLimitGeneratoring = preloadTorque;
         slave.TorqueLimitMotoring = preloadTorque;
-        // if (slave.GetNodeID() == FC1.GetNodeID()) {
-        //     slave.SpeedRef = FC2.SpeedRef;
-        // } else {
-        //     slave.SpeedRef = FC1.SpeedRef;
-        // }
-    } else {
-        // slave.TorqueLimitGeneratoring = 0;
-        // slave.TorqueLimitMotoring = 0;
     }
-}
-
-void AntiBacklashController::TestScriptPos() {
-    static int testStep = 0;
-    static double targetDeg = 0.0;
-    static bool moveStarted = false;
-
-    if (!gotStartPos && ENC1.position > 0) {
-        startPos = EncoderRawToDeg_F5888(ENC1);
-        gotStartPos = true;
-    }
-
-    if (!gotStartPos) {return;}
-
-    if (!moveStarted) {
-        switch (testStep) {
-            case 0: targetDeg = EncoderRawToDeg_F5888(ENC1) + 360; break;
-            case 1: targetDeg = EncoderRawToDeg_F5888(ENC1) - 360; break;
-            case 2: targetDeg = EncoderRawToDeg_F5888(ENC1) + 360; break;
-            case 3: targetDeg = EncoderRawToDeg_F5888(ENC1) - 360; break;
-            case 4: antiBacklashEnabled = true; targetDeg = EncoderRawToDeg_F5888(ENC1) + 360; break;
-            case 5: targetDeg = EncoderRawToDeg_F5888(ENC1) - 360; break;
-            case 6: targetDeg = EncoderRawToDeg_F5888(ENC1) + 360; break;
-            case 7: targetDeg = EncoderRawToDeg_F5888(ENC1) - 360; break;
-            default:
-                StopAll();
-                testStep = 0;
-                requestedState = "Null";
-                antiBacklashEnabled = false;
-                moveStarted = false;
-                return;
-        }
-        moveStarted = true;
-    }
-
-    double currentDeg = EncoderRawToDeg_F5888(ENC1);
-    double error = targetDeg - currentDeg;
-
-    MoveToPos(targetDeg, antiBacklashEnabled, testStep >= 2 && (testStep % 2 == 1));
-
-    if (abs(error) < degMargin) {
-        testStep++;
-        moveStarted = false;
-    }
-
-    std::cout << "Step: " << testStep << "  Error: " << error << std::endl;
-}
-
-void AntiBacklashController::EncoderTest() {
-
-    if (!gotStartPos && ENC1.position > 0) {
-        startPos = EncoderRawToDeg_F5888(ENC1);
-        gotStartPos = true;
-    }
-
-    if (gotStartPos) {
-        double targetPos = startPos + 180.0;
-        std::cout << "Start pos: " << startPos << " -- " << "Target pos: " << targetPos << std::endl;
-        MoveToPos(targetPos, true, true);
-    }
-}
-
-void AntiBacklashController::antibacklashTestScript(double t, int speedNoLoad = 15, int speedLoad = 20) { // Old script
-    int time_interval = (int)t / 5;
-
-    switch (time_interval) {
-        case 0: // 0 to 4.99 seconds
-            exportData = false;
-            FC1.SpeedRef = speedNoLoad;
-            FC2.SpeedRef = speedNoLoad;
-
-            FC1.TorqueLimitGeneratoring = 10;
-            FC1.TorqueLimitMotoring = 10;
-            FC2.TorqueLimitGeneratoring = 0;
-            FC2.TorqueLimitMotoring = 0;
-
-            FC3.TorqueLimitGeneratoring = 10;
-            FC3.TorqueLimitMotoring = 10;
-            break;
-
-        case 1: // 5 to 9.99 seconds
-            FC1.SpeedRef = speedNoLoad;
-            FC2.SpeedRef = speedNoLoad;
-
-            FC1.TorqueLimitGeneratoring = 0;
-            FC1.TorqueLimitMotoring = 0;
-            FC2.TorqueLimitGeneratoring = 10;
-            FC2.TorqueLimitMotoring = 10;
-
-            FC3.TorqueLimitGeneratoring = 10;
-            FC3.TorqueLimitMotoring = 10;
-            break;
-
-        case 2: // 10 to 14.99 seconds
-            exportData = true;
-            FC1.SpeedRef = speedLoad;
-            FC2.SpeedRef = speedLoad;
-            FC3.SpeedRef = speedLoad / 10;
-            dirC = false;
-
-            FC1.TorqueLimitGeneratoring = 10;
-            FC1.TorqueLimitMotoring = 10;
-            FC2.TorqueLimitGeneratoring = 0;
-            FC2.TorqueLimitMotoring = 0;
-
-            FC3.TorqueLimitGeneratoring = 10;
-            FC3.TorqueLimitMotoring = 10;
-            break;
-
-        case 3: // 15 to 19.99 seconds
-            FC1.SpeedRef = speedLoad;
-            FC2.SpeedRef = speedLoad;
-            FC3.SpeedRef = speedLoad / 10;
-            dirC = true;
-
-            FC1.TorqueLimitGeneratoring = 0;
-            FC1.TorqueLimitMotoring = 0;
-            FC2.TorqueLimitGeneratoring = 10;
-            FC2.TorqueLimitMotoring = 10;
-
-            FC3.TorqueLimitGeneratoring = 10;
-            FC3.TorqueLimitMotoring = 10;
-            break;
-
-        case 4: // 20 to 24.99 seconds (ANTI BACKLASH!!!)
-            exportData = false;
-            antiBacklashEnabled = true;
-            FC1.SpeedRef = speedNoLoad;
-            FC2.SpeedRef = speedNoLoad;
-
-            FC1.TorqueLimitGeneratoring = 10;
-            FC1.TorqueLimitMotoring = 10;
-            FC2.TorqueLimitGeneratoring = 0;
-            FC2.TorqueLimitMotoring = 0;
-
-            FC3.TorqueLimitGeneratoring = 10;
-            FC3.TorqueLimitMotoring = 10;
-            break;
-
-        case 5: // 25 to 29.99 seconds
-            FC1.SpeedRef = speedNoLoad;
-            FC2.SpeedRef = speedNoLoad;
-
-            FC1.TorqueLimitGeneratoring = 0;
-            FC1.TorqueLimitMotoring = 0;
-            FC2.TorqueLimitGeneratoring = 10;
-            FC2.TorqueLimitMotoring = 10;
-
-            FC3.TorqueLimitGeneratoring = 10;
-            FC3.TorqueLimitMotoring = 10;
-            break;
-
-        case 6: // 30 to 34.99 seconds
-            exportData = true;
-            FC1.SpeedRef = speedLoad;
-            FC2.SpeedRef = speedLoad;
-            FC3.SpeedRef = speedLoad / 10;
-            dirC = false;
-
-            FC1.TorqueLimitGeneratoring = 10;
-            FC1.TorqueLimitMotoring = 10;
-            FC2.TorqueLimitGeneratoring = 0;
-            FC2.TorqueLimitMotoring = 0;
-
-            FC3.TorqueLimitGeneratoring = 10;
-            FC3.TorqueLimitMotoring = 10;
-            break;
-
-        case 7: // 35 to 39.99 seconds
-            FC1.SpeedRef = speedLoad;
-            FC2.SpeedRef = speedLoad;
-            FC3.SpeedRef = speedLoad / 10;
-            dirC = true;
-
-            FC1.TorqueLimitGeneratoring = 0;
-            FC1.TorqueLimitMotoring = 0;
-            FC2.TorqueLimitGeneratoring = 10;
-            FC2.TorqueLimitMotoring = 10;
-
-            FC3.TorqueLimitGeneratoring = 10;
-            FC3.TorqueLimitMotoring = 10;
-            break;
-
-        default: // 45 seconds or more
-            exportData = false;
-            timer.Reset();
-            FC1.Enable = FC2.Enable = FC3.Enable = false;
-            antiBacklashEnabled = false;
-            requestedState = "Null";
-            break;
-    }
-}
-
-int AntiBacklashController::encSpeedScaler() {
-    return ENC1.speed / 10;
 }
