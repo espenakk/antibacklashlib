@@ -1951,7 +1951,7 @@
        <value type="QString" key="id">EncoderPortNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
         <value type="qlonglong" key="x">200</value>
-        <value type="qlonglong" key="y">541</value>
+        <value type="qlonglong" key="y">775</value>
        </valuemap>
       </valuemap>
       <valuemap type="QVariantMap">
@@ -1965,7 +1965,7 @@
        <value type="QString" key="id">KublerF5888NodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
         <value type="double" key="x">346.6666666666667</value>
-        <value type="qlonglong" key="y">2090</value>
+        <value type="qlonglong" key="y">2324</value>
        </valuemap>
       </valuemap>
       <valuemap type="QVariantMap">
@@ -1993,21 +1993,21 @@
        <value type="QString" key="id">FC1NodeNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
         <value type="qlonglong" key="x">0</value>
-        <value type="qlonglong" key="y">2090</value>
+        <value type="qlonglong" key="y">2324</value>
        </valuemap>
       </valuemap>
       <valuemap type="QVariantMap">
        <value type="QString" key="id">FC1PortNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
         <value type="qlonglong" key="x">200</value>
-        <value type="qlonglong" key="y">735</value>
+        <value type="qlonglong" key="y">969</value>
        </valuemap>
       </valuemap>
       <valuemap type="QVariantMap">
        <value type="QString" key="id">VaconFC1NodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
         <value type="qlonglong" key="x">200</value>
-        <value type="qlonglong" key="y">929</value>
+        <value type="qlonglong" key="y">1163</value>
        </valuemap>
       </valuemap>
       <valuemap type="QVariantMap">
@@ -2021,7 +2021,7 @@
        <value type="QString" key="id">KublerF5888_oldNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
         <value type="qlonglong" key="x">0</value>
-        <value type="double" key="y">2471.6666666666665</value>
+        <value type="double" key="y">2705.6666666666665</value>
        </valuemap>
       </valuemap>
      </valuelist>

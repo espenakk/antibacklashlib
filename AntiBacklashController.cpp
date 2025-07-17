@@ -139,21 +139,19 @@ void AntiBacklashController::ProcessDebug()
     scaledEncSpeed = encSpeedScaler(ENC1);
     scaledEncPosition = EncoderRawToDeg_F5888(ENC1);
 
-    MotorRoles motorRoles;
-
     enableMasterSlave(motorRoles, enabled);
     enableLoad(motorRoles, loadEnabled);
 
-    if (dir) { //Motor A is Master
+    if (!dir) { //Motor A is Master
         motorRoles.master = &FC1;
         motorRoles.slave = &FC2;
-        setMasterSlaveTorque(motorRoles, maxTorque, maxTorque);
+        setMasterSlaveTorque(motorRoles, maxTorque, 0.0);
         setMasterSlaveSpeed(motorRoles, speedCmdA, speedCmdB);
 
     } else { //Motor B is Master
         motorRoles.master = &FC2;
         motorRoles.slave = &FC1;
-        setMasterSlaveTorque(motorRoles, maxTorque, maxTorque);
+        setMasterSlaveTorque(motorRoles, maxTorque, 0.0);
         setMasterSlaveSpeed(motorRoles, speedCmdB, speedCmdA);
     }
 }
@@ -166,6 +164,8 @@ void AntiBacklashController::ProcessRunning()
     elapsedTime = timer.TimeElapsed();
     scaledEncSpeed = encSpeedScaler(ENC1);
     scaledEncPosition = EncoderRawToDeg_F5888(ENC1);
+    enableMasterSlave(motorRoles, true);
+
     static int testStep = 0;
     static double targetDeg = 0.0;
     static bool moveStarted = false;
@@ -268,10 +268,12 @@ MotorRoles AntiBacklashController::ChooseMasterSlave(double errorDeg) {
     if (errorDeg > 0) {
         roles.master = &FC1;
         roles.slave = &FC2;
+        roles.load = &FC3;
         return roles;
     } else {
         roles.master = &FC2;
         roles.slave = &FC1;
+        roles.load = &FC3;
         return roles;
     }
 }
