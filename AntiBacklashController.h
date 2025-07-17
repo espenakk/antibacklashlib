@@ -11,9 +11,10 @@
 
 namespace AntiBacklashLib {
 
-struct MasterSlave {
+struct MotorRoles {
     VaconLib::VaconMarineAppFCPort* master;
     VaconLib::VaconMarineAppFCPort* slave;
+    VaconLib::VaconMarineAppFCPort* load;
 };
 
 class AntiBacklashController : public CDPComponent
@@ -39,6 +40,16 @@ protected:
     VaconLib::VaconMarineAppFCPort FC2;
     VaconLib::VaconMarineAppFCPort FC3;
     EncoderPort ENC1;
+    CDPParameter loadTorqueLimit;
+    CDPParameter maxTorque;
+    CDPParameter maxSpeed;
+    CDPParameter minSpeed;
+    CDPParameter slowdownRange;
+    CDPParameter degMargin;
+    CDPParameter slaveTorque;
+    CDPParameter masterDroop;
+    CDPParameter slaveDroop;
+    CDPParameter loadDroop;
 
     CDPSignal<bool> enabled;
     CDPSignal<bool> loadEnabled;
@@ -47,7 +58,6 @@ protected:
     CDPSignal<bool> dirC;
     CDPSignal<bool> startAntibacklashTestButton;
     CDPSignal<bool> runningAntiBacklashTestScript;
-    CDPSignal<bool> exportData;
     CDPSignal<bool> debugMode;
     CDPSignal<double> speedCmdA;
     CDPSignal<double> speedCmdB;
@@ -58,28 +68,34 @@ protected:
     CDPTimer timer;
     CDPSignal<double> elapsedTime;
 
-    double encSpeedScaler() { return double(ENC1.speed) / 9.549297; }
+    MotorRoles motorRoles;
+
+    double encSpeedScaler(const EncoderPort& rawEnc) { return double(rawEnc.speed) / 9.549297; }
     double EncoderRawToDeg_F5888(const EncoderPort& rawEnc) { return static_cast<double>(rawEnc.position) * (360.0 / 65535); }
+
     void initFC(VaconLib::VaconMarineAppFCPort& FC, bool enable);
-    void StopAllMotors();
-    MasterSlave ChooseMasterSlave(double errorDeg, double speed);
     double SpeedController(double errorDeg);
-    void MoveToPos(double targetDeg, bool antiBacklashEnabled);
+    void MoveToPos(MotorRoles& motorRoles, double targetDeg, bool antiBacklashEnabled);
     
+    MotorRoles ChooseMasterSlave(double errorDeg);
+    void setMasterSlaveTorque(MotorRoles& roles, double masterTorque, double slaveTorque);
+    void setMasterSlaveSpeed(MotorRoles& roles, double masterSpeed, double slaveSpeed);
+    void enableLoad(MotorRoles& roles, bool enable);
+    void enableMasterSlave(MotorRoles& roles, bool enable);
+    void StopAllMotors(MotorRoles& roles);
+    void setLoadDrooping(MotorRoles& roles, double masterDroop, double slaveDroop, double loadDroop);
+
     double startPos;
     bool gotStartPos = false;
-    double degMargin = 10.0;
 
-    double preloadTorque = 0.15 * kMaxTorque; //Nm
-    double velocityDeadzone = 0.5; //rad/s
+    double preloadTorque = 0.15 * maxTorque; //Nm
 
-    static constexpr double kLoadTorqueLimit = 2.0; //Nm
-    static constexpr double kMaxTorque = 10; //Nm
-
-    void setMasterSlaveTorque(MasterSlave roles, double masterTorque, double slaveTorque);
-    void enableLoad(VaconLib::VaconMarineAppFCPort& load, bool enable);
-    void enableMasterSlave(VaconLib::VaconMarineAppFCPort& master, VaconLib::VaconMarineAppFCPort& slave, bool enable);
-
+    // static constexpr double kLoadTorqueLimit = 2.0; //Nm
+    // static constexpr double kMaxTorque = 10; //Nm
+    // static constexpr double kMaxSpeed = 2.0 * M_PI / 5;
+    // static constexpr double kMinSpeed = 2.0 * M_PI / 20;
+    // static constexpr double kSlowdownRange = 50.0;
+    // static constexpr double kDegMargin = 10.0;
 
     using CDPComponent::fs;
     using CDPComponent::requestedState;

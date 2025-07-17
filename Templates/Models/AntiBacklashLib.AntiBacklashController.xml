@@ -15,17 +15,27 @@
   <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="enabled" Type="bool"/>
   <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="loadEnabled" Type="bool"/>
   <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="debugMode" Type="bool"/>
-  <Signal Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmdA" Type="double"/>
-  <Signal Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmdB" Type="double"/>
-  <Signal Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmdC" Type="double"/>
+  <Signal Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmdA" Type="double" Unit="rad/s"/>
+  <Signal Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmdB" Type="double" Unit="rad/s"/>
+  <Signal Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmdC" Type="double" Unit="rad/s"/>
   <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="runningAntiBacklashTestScript" Type="bool"/>
   <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="antiBacklashEnabled" Type="bool"/>
-  <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="exportData" Type="bool"/>
   <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="elapsedTime" Type="double"/>
-  <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="scaledEncSpeed" Type="double" Unit="" Value=""/>
-  <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="scaledEncPosition" Type="double" Unit="" Value=""/>
+  <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="scaledEncSpeed" Type="double" Unit="rad/s" Value=""/>
+  <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="scaledEncPosition" Type="double" Unit="rad/s" Value=""/>
  </Signals>
- <Parameters/>
+ <Parameters>
+  <Parameter Name="loadTorqueLimit" Unit="Nm" Value="2.0"/>
+  <Parameter Name="maxTorque" Unit="Nm" Value="10.0"/>
+  <Parameter Name="maxSpeed" Unit="rad/s" Value="1.2566"/>
+  <Parameter Name="minSpeed" Unit="rad/s" Value="0.31415"/>
+  <Parameter Name="slowdownRange" Unit="Degrees" Value="50"/>
+  <Parameter Name="degMargin" Unit="Degrees" Value="10"/>
+  <Parameter Name="slaveTorque" Unit="%" Value="15"/>
+  <Parameter Name="masterDroop" Unit="%" Value="0.0"/>
+  <Parameter Name="slaveDroop" Unit="%" Value="0.0"/>
+  <Parameter Name="loadDroop" Unit="%" Value="0.0"/>
+ </Parameters>
  <Ports>
   <Port Input="0" Model="VaconLib.VaconMarineAppFCPort" Name="FC1">
    <Connections>
