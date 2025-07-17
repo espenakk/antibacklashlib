@@ -64,6 +64,12 @@ protected:
     CDPSignal<double> speedCmdC;
     CDPSignal<double> scaledEncSpeed;
     CDPSignal<double> scaledEncPosition;
+    CDPSignal<double> FC1Speed;
+    CDPSignal<double> FC2Speed;
+    CDPSignal<double> FC1Torque;
+    CDPSignal<double> FC2Torque;
+    CDPSignal<double> FC3Torque;
+    CDPSignal<double> FCSpeedRef;
 
     CDPTimer timer;
     CDPSignal<double> elapsedTime;
@@ -72,7 +78,7 @@ protected:
 
     double encSpeedScaler(const EncoderPort& rawEnc) { return double(rawEnc.speed) / 9.549297; }
     double EncoderRawToDeg_F5888(const EncoderPort& rawEnc) { return static_cast<double>(rawEnc.position) * (360.0 / 65535); }
-
+    void scaleFCSpeedTorque(MotorRoles& roles);
     void initFC(VaconLib::VaconMarineAppFCPort& FC, bool enable);
     double SpeedController(double errorDeg);
     void MoveToPos(MotorRoles& motorRoles, double targetDeg, bool antiBacklashEnabled);

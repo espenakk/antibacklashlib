@@ -40,6 +40,12 @@ AntiBacklashController::~AntiBacklashController()
 void AntiBacklashController::Create(const char* fullName)
 {
     CDPComponent::Create(fullName);
+    FCSpeedRef.Create("FCSpeedRef",this);
+    FC1Torque.Create("FC1Torque",this);
+    FC2Torque.Create("FC2Torque",this);
+    FC3Torque.Create("FC3Torque",this);
+    FC1Speed.Create("FC1Speed",this);
+    FC2Speed.Create("FC2Speed",this);
     debugMode.Create("debugMode",this);
     speedCmdA.Create("speedCmdA",this);
     speedCmdB.Create("speedCmdB",this);
@@ -138,6 +144,7 @@ void AntiBacklashController::ProcessDebug()
     elapsedTime = 42.0;
     scaledEncSpeed = encSpeedScaler(ENC1);
     scaledEncPosition = EncoderRawToDeg_F5888(ENC1);
+    scaleFCSpeedTorque(motorRoles);
 
     enableMasterSlave(motorRoles, enabled);
     enableLoad(motorRoles, loadEnabled);
@@ -164,6 +171,7 @@ void AntiBacklashController::ProcessRunning()
     elapsedTime = timer.TimeElapsed();
     scaledEncSpeed = encSpeedScaler(ENC1);
     scaledEncPosition = EncoderRawToDeg_F5888(ENC1);
+    scaleFCSpeedTorque(motorRoles);
     enableMasterSlave(motorRoles, true);
 
     static int testStep = 0;
@@ -352,4 +360,18 @@ void AntiBacklashController::setLoadDrooping(MotorRoles& roles, double masterDro
     roles.master->LoadDrooping = masterDroop;
     roles.slave->LoadDrooping = slaveDroop;
     roles.load->LoadDrooping = loadDroop;
+}
+
+void AntiBacklashController::scaleFCSpeedTorque(MotorRoles& roles) {
+    FC1Speed = FC1.SpeedActual;
+    FC2Speed = -FC2.SpeedActual;
+    FC1Torque = FC1.TorqueActual;
+    FC2Torque = FC2.TorqueActual;
+    FC3Torque = -std::abs(FC3.TorqueActual);
+
+    if (roles.master->GetNodeID() == FC1.GetNodeID()) {
+        FCSpeedRef = roles.master->SpeedRef;
+    } else {
+        FCSpeedRef = -roles.master->SpeedRef;
+    }
 }
