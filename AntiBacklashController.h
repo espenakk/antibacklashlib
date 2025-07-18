@@ -29,11 +29,14 @@ public:
 
     void ProcessNull() override;
     void ProcessDebug();
-    void ProcessRunning();
+    void ProcessPositionTest();
+    void ProcessSpeedTimerTest();
     bool TransitionNullToDebug();
     bool TransitionDebugToNull();
-    bool TransitionNullToRunning();
-    bool TransitionRunningToNull();
+    bool TransitionNullToPositionTest();
+    bool TransitionPositionTestToNull();
+    bool TransitionNullToSpeedTimerTest();
+    bool TransitionSpeedTimerTestToNull();
 
 protected:
     VaconLib::VaconMarineAppFCPort FC1;
@@ -46,22 +49,14 @@ protected:
     CDPParameter minSpeed;
     CDPParameter slowdownRange;
     CDPParameter degMargin;
-    CDPParameter slaveTorque;
-    CDPParameter masterDroop;
-    CDPParameter slaveDroop;
-    CDPParameter loadDroop;
+    CDPParameter slaveTorqueBase;
+    CDPParameter slaveTorqueGain;
 
     CDPSignal<bool> enabled;
-    CDPSignal<bool> loadEnabled;
     CDPSignal<bool> antiBacklashEnabled;
-    CDPSignal<bool> dir;
-    CDPSignal<bool> dirC;
     CDPSignal<bool> startAntibacklashTestButton;
-    CDPSignal<bool> runningAntiBacklashTestScript;
     CDPSignal<bool> debugMode;
-    CDPSignal<double> speedCmdA;
-    CDPSignal<double> speedCmdB;
-    CDPSignal<double> speedCmdC;
+    CDPSignal<double> speedCmd;
     CDPSignal<double> scaledEncSpeed;
     CDPSignal<double> scaledEncPosition;
     CDPSignal<double> FC1Speed;
@@ -77,31 +72,24 @@ protected:
     MotorRoles motorRoles;
 
     double encSpeedScaler(const EncoderPort& rawEnc) { return double(rawEnc.speed) / 9.549297; }
-    double EncoderRawToDeg_F5888(const EncoderPort& rawEnc) { return static_cast<double>(rawEnc.position) * (360.0 / 65535); }
+    double encoderRawToDeg_F5888(const EncoderPort& rawEnc) { return static_cast<double>(rawEnc.position) * (360.0 / 65535); }
     void scaleFCSpeedTorque(MotorRoles& roles);
     void initFC(VaconLib::VaconMarineAppFCPort& FC, bool enable);
-    double SpeedController(double errorDeg);
-    void MoveToPos(MotorRoles& motorRoles, double targetDeg, bool antiBacklashEnabled);
+    double speedController(double errorDeg);
+
+    double adaptiveSlaveTorque(double& speedCmd);
     
-    MotorRoles ChooseMasterSlave(double errorDeg);
+    MotorRoles chooseMasterSlave(double error);
     void setMasterSlaveTorque(MotorRoles& roles, double masterTorque, double slaveTorque);
     void setMasterSlaveSpeed(MotorRoles& roles, double masterSpeed, double slaveSpeed);
     void enableLoad(MotorRoles& roles, bool enable);
     void enableMasterSlave(MotorRoles& roles, bool enable);
-    void StopAllMotors(MotorRoles& roles);
-    void setLoadDrooping(MotorRoles& roles, double masterDroop, double slaveDroop, double loadDroop);
+    void stopAllMotors(MotorRoles& roles);
 
     double startPos;
     bool gotStartPos = false;
 
-    double preloadTorque = 0.15 * maxTorque; //Nm
-
-    // static constexpr double kLoadTorqueLimit = 2.0; //Nm
-    // static constexpr double kMaxTorque = 10; //Nm
-    // static constexpr double kMaxSpeed = 2.0 * M_PI / 5;
-    // static constexpr double kMinSpeed = 2.0 * M_PI / 20;
-    // static constexpr double kSlowdownRange = 50.0;
-    // static constexpr double kDegMargin = 10.0;
+    double previousSpeedRef;
 
     using CDPComponent::fs;
     using CDPComponent::requestedState;

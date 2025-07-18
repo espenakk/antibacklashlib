@@ -10,15 +10,9 @@
  </Attributes>
  <Signals>
   <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="startAntibacklashTestButton" Type="bool"/>
-  <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="dir" Type="bool"/>
-  <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="dirC" Type="bool"/>
   <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="enabled" Type="bool"/>
-  <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="loadEnabled" Type="bool"/>
   <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="debugMode" Type="bool"/>
-  <Signal Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmdA" Type="double" Unit="rad/s"/>
-  <Signal Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmdB" Type="double" Unit="rad/s"/>
-  <Signal Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmdC" Type="double" Unit="rad/s"/>
-  <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="runningAntiBacklashTestScript" Type="bool"/>
+  <Signal Description="" Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmd" Type="double" Unit="rad/s" Value=""/>
   <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="antiBacklashEnabled" Type="bool"/>
   <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="elapsedTime" Type="double"/>
   <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="scaledEncSpeed" Type="double" Unit="rad/s" Value=""/>
@@ -37,10 +31,8 @@
   <Parameter Name="minSpeed" Unit="rad/s" Value="0.31415"/>
   <Parameter Name="slowdownRange" Unit="Degrees" Value="50"/>
   <Parameter Name="degMargin" Unit="Degrees" Value="10"/>
-  <Parameter Name="slaveTorque" Unit="%" Value="15"/>
-  <Parameter Name="masterDroop" Unit="%" Value="0.0"/>
-  <Parameter Name="slaveDroop" Unit="%" Value="0.0"/>
-  <Parameter Name="loadDroop" Unit="%" Value="0.0"/>
+  <Parameter Description="" Name="slaveTorqueBase" Unit="Nm" Value="0"/>
+  <Parameter Name="slaveTorqueGain" Value="1"/>
  </Parameters>
  <Ports>
   <Port Input="0" Model="VaconLib.VaconMarineAppFCPort" Name="FC1">
@@ -102,12 +94,15 @@
  </Ports>
  <States>
   <State Name="Debug"/>
-  <State Name="Running"/>
+  <State Description="" Name="PositionTest"/>
+  <State Name="SpeedTimerTest"/>
  </States>
  <StateTransitions>
-  <StateTransition FromState="Null" Name="NullToDebug" ToState="Debug"/>
-  <StateTransition FromState="Debug" Name="DebugToNull" ToState="Null"/>
+  <StateTransition Description="" FromState="Null" Name="NullToPositionTest" ToState="PositionTest"/>
+  <StateTransition Description="" FromState="PositionTest" Name="PositionTestToNull" ToState="Null"/>
   <StateTransition FromState="Null" Name="NullToRunning" ToState="Running"/>
   <StateTransition FromState="Running" Name="RunningToNull" ToState="Null"/>
+  <StateTransition FromState="Null" Name="NullToSpeedTimerTest" ToState="SpeedTimerTest"/>
+  <StateTransition FromState="SpeedTimerTest" Name="SpeedTimerTestToNull" ToState="Null"/>
  </StateTransitions>
 </Model>

@@ -15,7 +15,7 @@ using namespace AntiBacklashLib;
   \internal
   \brief Component constructor. The first function to be called. Can be used to initialize member variables, etc.
 */
-AntiBacklashController::AntiBacklashController()
+AntiBacklashController::AntiBacklashController(): previousSpeedRef(0.0)
 {
     motorRoles.master = &FC1;
     motorRoles.slave = &FC2;
@@ -47,9 +47,7 @@ void AntiBacklashController::Create(const char* fullName)
     FC1Speed.Create("FC1Speed",this);
     FC2Speed.Create("FC2Speed",this);
     debugMode.Create("debugMode",this);
-    speedCmdA.Create("speedCmdA",this);
-    speedCmdB.Create("speedCmdB",this);
-    speedCmdC.Create("speedCmdC",this);
+    speedCmd.Create("speedCmd",this);
     FC1.Create("FC1",this);
     FC2.Create("FC2",this);
     FC3.Create("FC3",this);
@@ -60,20 +58,14 @@ void AntiBacklashController::Create(const char* fullName)
     minSpeed.Create("minSpeed",this);
     slowdownRange.Create("slowdownRange",this);
     degMargin.Create("degMargin",this);
-    slaveTorque.Create("slaveTorque",this);
-    masterDroop.Create("masterDroop",this);
-    slaveDroop.Create("slaveDroop",this);
-    loadDroop.Create("loadDroop",this);
+    slaveTorqueBase.Create("slaveTorqueBase",this);
+    slaveTorqueGain.Create("slaveTorqueGain",this);
     enabled.Create("enabled",this);
-    loadEnabled.Create("loadEnabled",this);
-    dir.Create("dir",this);
     antiBacklashEnabled.Create("antiBacklashEnabled",this);
-    dirC.Create("dirC",this);
     timer.Create("timer",this);
     elapsedTime.Create("elapsedTime",this);
     scaledEncPosition.Create("scaledEncPosition",this);
     startAntibacklashTestButton.Create("startAntibacklashTestButton",this);
-    runningAntiBacklashTestScript.Create("runningAntiBacklashTestScript",this);
     scaledEncSpeed.Create("scaledEncSpeed",this);
 }
 
@@ -89,11 +81,14 @@ void AntiBacklashController::CreateModel()
 
     RegisterStateProcess("Null", (CDPCOMPONENT_STATEPROCESS) &AntiBacklashController::ProcessNull, "Initial Null state");
     RegisterStateProcess("Debug",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessDebug,"");
-    RegisterStateProcess("Running",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessRunning,"");
+    RegisterStateProcess("PositionTest",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessPositionTest,"");
+    RegisterStateProcess("SpeedTimerTest",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessSpeedTimerTest,"");
     RegisterStateTransitionHandler("Null","Debug",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToDebug,"");
     RegisterStateTransitionHandler("Debug","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionDebugToNull,"");
-    RegisterStateTransitionHandler("Null","Running",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToRunning,"");
-    RegisterStateTransitionHandler("Running","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionRunningToNull,"");
+    RegisterStateTransitionHandler("Null","PositionTest",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToPositionTest,"");
+    RegisterStateTransitionHandler("PositionTest","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionPositionTestToNull,"");
+    RegisterStateTransitionHandler("Null","SpeedTimerTest",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToSpeedTimerTest,"");
+    RegisterStateTransitionHandler("SpeedTimerTest","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionSpeedTimerTestToNull,"");
 }
 
 /*!
@@ -127,7 +122,6 @@ void AntiBacklashController::ProcessNull()
     initFC(FC1, isEnabled);
     initFC(FC2, isEnabled);
     initFC(FC3, isEnabled);
-    setLoadDrooping(motorRoles, masterDroop, slaveDroop, loadDroop);
     if (debugMode) {
         requestedState = "Debug";
     }
@@ -143,83 +137,106 @@ void AntiBacklashController::ProcessDebug()
     }
     elapsedTime = 42.0;
     scaledEncSpeed = encSpeedScaler(ENC1);
-    scaledEncPosition = EncoderRawToDeg_F5888(ENC1);
+    scaledEncPosition = encoderRawToDeg_F5888(ENC1);
     scaleFCSpeedTorque(motorRoles);
 
     enableMasterSlave(motorRoles, enabled);
-    enableLoad(motorRoles, loadEnabled);
+    enableLoad(motorRoles, enabled);
+    double absSpeedCmd = std::abs(speedCmd);
+    static double slaveTorque = adaptiveSlaveTorque(absSpeedCmd);
+    setMasterSlaveSpeed(motorRoles, absSpeedCmd, absSpeedCmd);
+    setMasterSlaveTorque(motorRoles, maxTorque, slaveTorque);
 
-    if (!dir) { //Motor A is Master
+    if (speedCmd > 0) {
         motorRoles.master = &FC1;
         motorRoles.slave = &FC2;
-        setMasterSlaveTorque(motorRoles, maxTorque, 0.0);
-        setMasterSlaveSpeed(motorRoles, speedCmdA, speedCmdB);
-
     } else { //Motor B is Master
         motorRoles.master = &FC2;
         motorRoles.slave = &FC1;
-        setMasterSlaveTorque(motorRoles, maxTorque, 0.0);
-        setMasterSlaveSpeed(motorRoles, speedCmdB, speedCmdA);
     }
 }
 
-void AntiBacklashController::ProcessRunning()
+void AntiBacklashController::ProcessPositionTest()
 {
     if (!timer.IsRunning()) {
         timer.Start();
     }
     elapsedTime = timer.TimeElapsed();
     scaledEncSpeed = encSpeedScaler(ENC1);
-    scaledEncPosition = EncoderRawToDeg_F5888(ENC1);
+    scaledEncPosition = encoderRawToDeg_F5888(ENC1);
     scaleFCSpeedTorque(motorRoles);
     enableMasterSlave(motorRoles, true);
-
+    enableLoad(motorRoles, true);
     static int testStep = 0;
     static double targetDeg = 0.0;
     static bool moveStarted = false;
-
-    if (!gotStartPos && int(ENC1.position) > 0) {
-        startPos = EncoderRawToDeg_F5888(ENC1);
-        gotStartPos = true;
-    }
-
-    if (!gotStartPos) {return;}
+    static double originalMaxSpeed = maxSpeed;
+    static double originalDegMargin = degMargin;
 
     if (!moveStarted) {
         switch (testStep) {
-        case 0: targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
-        case 1: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
-        case 2: targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
-        case 3: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
-        case 4: antiBacklashEnabled = true; targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
-        case 5: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
-        case 6: preloadTorque = 0.25 * maxTorque; targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
-        case 7: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
-        case 8: preloadTorque = 0.35 * maxTorque; targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
-        case 9: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
-        case 10: preloadTorque = 0.45 * maxTorque; targetDeg = EncoderRawToDeg_F5888(ENC1) - 270; loadEnabled = true; break;
-        case 11: targetDeg = EncoderRawToDeg_F5888(ENC1) + 450; loadEnabled = true; break;
+        case 0: targetDeg = scaledEncPosition + 90; break;
+        case 1: targetDeg = scaledEncPosition - 270; break;
+        case 2: targetDeg = scaledEncPosition + 450; antiBacklashEnabled = true; break;
+        case 3: targetDeg = scaledEncPosition - 270; break;
+        case 4: targetDeg = scaledEncPosition + 450; antiBacklashEnabled = false; break;
+        case 5: targetDeg = scaledEncPosition - 360; maxSpeed = maxSpeed * 2; degMargin = degMargin * 3; break;
+        case 6: targetDeg = scaledEncPosition + 540; antiBacklashEnabled = true; break;
+        case 7: targetDeg = scaledEncPosition - 360; break;
+        case 8: targetDeg = scaledEncPosition + 540; antiBacklashEnabled = false; break;
+        case 9: targetDeg = scaledEncPosition - 450; maxSpeed = maxSpeed * 2; break;
+        case 10: targetDeg = scaledEncPosition + 630; antiBacklashEnabled = true; break;
+        case 11: targetDeg = scaledEncPosition - 450; break;
+        case 12: targetDeg = scaledEncPosition + 630; antiBacklashEnabled = false; break;
+        case 13: targetDeg = scaledEncPosition - 540; maxSpeed = maxSpeed * 2; break;
+        case 14: targetDeg = scaledEncPosition + 720; antiBacklashEnabled = true; break;
+        case 15: targetDeg = scaledEncPosition - 540; break;
+        case 16: targetDeg = scaledEncPosition + 720; break;
 
         default:
-            StopAllMotors(motorRoles);
-            testStep = 0;
+            stopAllMotors(motorRoles);
             requestedState = "Null";
             antiBacklashEnabled = false;
+            testStep = 0;
             moveStarted = false;
+            maxSpeed = originalMaxSpeed;
+            degMargin = originalDegMargin;
             return;
         }
         moveStarted = true;
     }
 
-    double currentDeg = EncoderRawToDeg_F5888(ENC1);
-    double error = targetDeg - currentDeg;
+    double currentDeg = encoderRawToDeg_F5888(ENC1);
+    double errorDeg = targetDeg - currentDeg;
+    motorRoles = chooseMasterSlave(errorDeg);
+    double speedRef = speedController(errorDeg);
+    double slaveTorque = adaptiveSlaveTorque(speedRef);
 
-    MoveToPos(motorRoles, targetDeg, antiBacklashEnabled);
+    setMasterSlaveSpeed(motorRoles, speedRef, speedRef);
+    setMasterSlaveTorque(motorRoles, maxTorque, slaveTorque);
 
-    if (abs(error) < degMargin) {
+    if (abs(errorDeg) < degMargin) {
         testStep++;
         moveStarted = false;
+        previousSpeedRef = 0.0;
+    } else {
+        previousSpeedRef = std::abs(motorRoles.master->SpeedRef);
     }
+}
+
+
+
+void AntiBacklashController::ProcessSpeedTimerTest()
+{
+    if (!timer.IsRunning()) {
+        timer.Start();
+    }
+    elapsedTime = timer.TimeElapsed();
+    scaledEncSpeed = encSpeedScaler(ENC1);
+    scaledEncPosition = encoderRawToDeg_F5888(ENC1);
+    scaleFCSpeedTorque(motorRoles);
+    enableMasterSlave(motorRoles, true);
+
 }
 
 
@@ -242,7 +259,7 @@ bool AntiBacklashController::TransitionDebugToNull()
         return false;
 }
 
-bool AntiBacklashController::TransitionNullToRunning()
+bool AntiBacklashController::TransitionNullToPositionTest()
 {
     if(requestedState=="Running") {
         return true;
@@ -251,11 +268,27 @@ bool AntiBacklashController::TransitionNullToRunning()
     }
 }
 
-bool AntiBacklashController::TransitionRunningToNull()
+bool AntiBacklashController::TransitionPositionTestToNull()
 {
     if(requestedState=="Null") {
         return true;
     }
+    else
+        return false;
+}
+
+bool AntiBacklashController::TransitionNullToSpeedTimerTest()
+{
+    if(requestedState=="SpeedTimerTest")
+        return true;
+    else
+        return false;
+}
+
+bool AntiBacklashController::TransitionSpeedTimerTestToNull()
+{
+    if(requestedState=="Null")
+        return true;
     else
         return false;
 }
@@ -271,9 +304,9 @@ void AntiBacklashController::initFC(VaconLib::VaconMarineAppFCPort& FC, bool ena
     FC.Enable = enable;
 }
 
-MotorRoles AntiBacklashController::ChooseMasterSlave(double errorDeg) {
+MotorRoles AntiBacklashController::chooseMasterSlave(double error) {
     MotorRoles roles;
-    if (errorDeg > 0) {
+    if (error > 0) {
         roles.master = &FC1;
         roles.slave = &FC2;
         roles.load = &FC3;
@@ -286,35 +319,30 @@ MotorRoles AntiBacklashController::ChooseMasterSlave(double errorDeg) {
     }
 }
 
-void AntiBacklashController::MoveToPos(MotorRoles& motorRoles, double targetDeg, bool antiBacklashEnabled) {
+double AntiBacklashController::adaptiveSlaveTorque(double& speedCmd) {
+    double deltaSpeedCmd = speedCmd - previousSpeedRef;
+    double actualSpeedDiff = abs(speedCmd - encSpeedScaler(ENC1));
+    double slaveTorque = 0.0;
 
-    double currentDeg = EncoderRawToDeg_F5888(ENC1);
-    double errorDeg = targetDeg - currentDeg;
-    double speedRef = SpeedController(errorDeg);
-
-    motorRoles = ChooseMasterSlave(errorDeg);
-    setMasterSlaveSpeed(motorRoles, speedRef, speedRef);
-
-    if (antiBacklashEnabled && (speedRef < maxSpeed)) {
-        setMasterSlaveTorque(motorRoles, maxTorque, preloadTorque);
-    } else {
-        setMasterSlaveTorque(motorRoles, maxTorque, 0.0);
+    if (deltaSpeedCmd < 0)  {
+        double dynamicTorque = slaveTorqueGain * std::max(0.0, -deltaSpeedCmd) * actualSpeedDiff;
+        slaveTorque = slaveTorqueBase + dynamicTorque;
     }
-    enableLoad(motorRoles, loadEnabled);
+    slaveTorque = std::min(slaveTorque, (double)maxTorque);
+    if (antiBacklashEnabled) {
+        return slaveTorque;
+    } else {
+        return 0.0;
+    }
 }
 
-double AntiBacklashController::SpeedController(double errorDeg) {
-    double absError = abs(errorDeg);
-    double speed = maxSpeed;
-
-    if (absError <= degMargin)
+double AntiBacklashController::speedController(double errorDeg) {
+    if (abs(errorDeg) <= degMargin)
         return 0.0;
-
-    if (absError < slowdownRange) {
-        speed = minSpeed + (maxSpeed - minSpeed) * (absError / slowdownRange);
+    if (abs(errorDeg) < slowdownRange) {
+        return minSpeed + (maxSpeed - minSpeed) * (abs(errorDeg) / slowdownRange);
     }
-
-    return speed;
+    return maxSpeed;
 }
 
 void AntiBacklashController::setMasterSlaveTorque(MotorRoles& roles, double masterTorque, double slaveTorque) {
@@ -332,12 +360,7 @@ void AntiBacklashController::enableMasterSlave(MotorRoles& roles, bool enable) {
 }
 
 void AntiBacklashController::enableLoad(MotorRoles& roles, bool enable) {
-    if (enable && debugMode) {
-        roles.load->SpeedRef = speedCmdC;
-        roles.load->TorqueLimitMotoring = maxTorque;
-        roles.load->TorqueLimitGeneratoring = maxTorque;
-        roles.load->Enable = true;
-    } else if (enable) {
+    if (enable) {
         roles.load->SpeedRef = 0.0;
         roles.load->TorqueLimitMotoring = loadTorqueLimit;
         roles.load->TorqueLimitGeneratoring = loadTorqueLimit;
@@ -349,17 +372,11 @@ void AntiBacklashController::enableLoad(MotorRoles& roles, bool enable) {
     }
 }
 
-void AntiBacklashController::StopAllMotors(MotorRoles& roles) {
+void AntiBacklashController::stopAllMotors(MotorRoles& roles) {
     setMasterSlaveTorque(roles, 0.0, 0.0);
     setMasterSlaveSpeed(roles, 0.0, 0.0);
     enableLoad(roles, false);
     enableMasterSlave(roles, false);
-}
-
-void AntiBacklashController::setLoadDrooping(MotorRoles& roles, double masterDroop, double slaveDroop, double loadDroop) {
-    roles.master->LoadDrooping = masterDroop;
-    roles.slave->LoadDrooping = slaveDroop;
-    roles.load->LoadDrooping = loadDroop;
 }
 
 void AntiBacklashController::scaleFCSpeedTorque(MotorRoles& roles) {
