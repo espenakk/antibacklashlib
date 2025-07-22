@@ -33,6 +33,8 @@
   <Parameter Name="degMargin" Unit="Degrees" Value="10"/>
   <Parameter Description="" Name="slaveTorqueBase" Unit="Nm" Value="0"/>
   <Parameter Name="slaveTorqueGain" Value="1"/>
+  <Parameter Name="rampDuration" Unit="s"/>
+  <Parameter Name="constSpeedDuration"/>
  </Parameters>
  <Ports>
   <Port Input="0" Model="VaconLib.VaconMarineAppFCPort" Name="FC1">

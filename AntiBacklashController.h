@@ -51,6 +51,8 @@ protected:
     CDPParameter degMargin;
     CDPParameter slaveTorqueBase;
     CDPParameter slaveTorqueGain;
+    CDPParameter rampDuration;
+    CDPParameter constSpeedDuration;
 
     CDPSignal<bool> enabled;
     CDPSignal<bool> antiBacklashEnabled;
@@ -78,6 +80,7 @@ protected:
     double speedController(double errorDeg);
 
     double adaptiveSlaveTorque(double& speedCmd);
+
     
     MotorRoles chooseMasterSlave(double error);
     void setMasterSlaveTorque(MotorRoles& roles, double masterTorque, double slaveTorque);
@@ -90,6 +93,11 @@ protected:
     bool gotStartPos = false;
 
     double previousSpeedRef;
+
+    int testPhase;
+    int cycleCounter;
+    double originalMaxSpeed;
+    double currentTestMaxSpeed;
 
     using CDPComponent::fs;
     using CDPComponent::requestedState;
