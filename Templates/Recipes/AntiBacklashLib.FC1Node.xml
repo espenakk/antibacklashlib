@@ -8,6 +8,7 @@
     <Attribute Name="NodeType" Value="NX OPT-C6 INU"></Attribute>
     <Attribute Name="Description" Value="VaconFC controlling M101, using OPT-C6 CANopen option board."></Attribute>
     <Attribute Name="Model" Value="AntiBacklashLib.FC1Node"></Attribute>
+    <Attribute Name="Fs" Value="100"></Attribute>
   </Attributes>
   <TPDO Model="CANOpenMaster.TPDO" Name="TPDO1" COBID="384" AdjustWithNodeAddress="1">
     <CDPChannel Model="CDPSignalChannel&lt;unsigned short&gt;" Name="DPStatusWord" Description="Status word for DriveProfile. Also valid in Bypass modes."></CDPChannel></TPDO>

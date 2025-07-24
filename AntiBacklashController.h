@@ -53,6 +53,9 @@ protected:
     CDPParameter slaveTorqueGain;
     CDPParameter rampDuration;
     CDPParameter constSpeedDuration;
+    CDPParameter offset;
+    CDPParameter slaveDroop;
+    CDPParameter masterDroop;
 
     CDPSignal<bool> enabled;
     CDPSignal<bool> antiBacklashEnabled;

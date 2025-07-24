@@ -2,109 +2,112 @@
 <Model Name="AntiBacklashLib.AntiBacklashController">
  <ModelTypeClass>C++</ModelTypeClass>
  <BaseModel>CDPComponent</BaseModel>
- <Element Name="Priority" Value="normal"/>
- <Element Name="fs" Value="5"/>
+ <Element Name="Priority" Value="normal"></Element>
  <Attributes>
-  <Attribute Name="Description" Type="string" Value="Controller for anti backlash testing"/>
-  <Attribute Description="Implementation model used." Name="Model" ReadOnly="1" Required="1" SaveOnChange="0" Type="string" Value="AntiBacklashLib.AntiBacklashController"/>
+  <Attribute Name="Description" Type="string" Value="Controller for anti backlash testing"></Attribute>
+  <Attribute Description="Implementation model used." Name="Model" ReadOnly="1" Required="1" SaveOnChange="0" Type="string" Value="AntiBacklashLib.AntiBacklashController"></Attribute>
  </Attributes>
  <Signals>
-  <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="startAntibacklashTestButton" Type="bool"/>
-  <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="enabled" Type="bool"/>
-  <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="debugMode" Type="bool"/>
-  <Signal Description="" Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmd" Type="double" Unit="rad/s" Value=""/>
-  <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="antiBacklashEnabled" Type="bool"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="elapsedTime" Type="double"/>
-  <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="scaledEncSpeed" Type="double" Unit="rad/s" Value=""/>
-  <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="scaledEncPosition" Type="double" Unit="rad/s" Value=""/>
-  <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="FC1Speed" Type="double" Unit="rad/s" Value=""/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC2Speed" Type="double" Unit="rad/s"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC1Torque" Type="double" Unit="Nm"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC2Torque" Type="double" Unit="Nm"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC3Torque" Type="double" Unit="Nm"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FCSpeedRef" Type="double" Unit="rad/s"/>
+  <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="startAntibacklashTestButton" Type="bool"></Signal>
+  <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="enabled" Type="bool"></Signal>
+  <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="debugMode" Type="bool"></Signal>
+  <Signal Description="" Input="1" Model="CDPSignal&lt;double&gt;" Name="speedCmd" Type="double" Unit="rad/s" Value=""></Signal>
+  <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="antiBacklashEnabled" Type="bool"></Signal>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="elapsedTime" Type="double"></Signal>
+  <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="scaledEncSpeed" Type="double" Unit="rad/s" Value=""></Signal>
+  <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="scaledEncPosition" Type="double" Unit="rad/s" Value=""></Signal>
+  <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="FC1Speed" Type="double" Unit="rad/s" Value=""></Signal>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC2Speed" Type="double" Unit="rad/s"></Signal>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC1Torque" Type="double" Unit="Nm"></Signal>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC2Torque" Type="double" Unit="Nm"></Signal>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC3Torque" Type="double" Unit="Nm"></Signal>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FCSpeedRef" Type="double" Unit="rad/s"></Signal>
  </Signals>
  <Parameters>
-  <Parameter Name="loadTorqueLimit" Unit="Nm" Value="2.0"/>
-  <Parameter Name="maxTorque" Unit="Nm" Value="10.0"/>
-  <Parameter Name="maxSpeed" Unit="rad/s" Value="1.2566"/>
-  <Parameter Name="minSpeed" Unit="rad/s" Value="0.31415"/>
-  <Parameter Name="slowdownRange" Unit="Degrees" Value="50"/>
-  <Parameter Name="degMargin" Unit="Degrees" Value="10"/>
-  <Parameter Description="" Name="slaveTorqueBase" Unit="Nm" Value="0"/>
-  <Parameter Name="slaveTorqueGain" Value="1"/>
-  <Parameter Name="rampDuration" Unit="s"/>
-  <Parameter Name="constSpeedDuration"/>
+  <Parameter Name="loadTorqueLimit" Unit="Nm" Value="2.0"></Parameter>
+  <Parameter Name="maxTorque" Unit="Nm" Value="10.0"></Parameter>
+  <Parameter Name="maxSpeed" Unit="rad/s" Value="1.2566"></Parameter>
+  <Parameter Name="minSpeed" Unit="rad/s" Value="0.31415"></Parameter>
+  <Parameter Name="slowdownRange" Unit="Degrees" Value="50"></Parameter>
+  <Parameter Name="degMargin" Unit="Degrees" Value="10"></Parameter>
+  <Parameter Description="" Name="slaveTorqueBase" Unit="Nm" Value="0"></Parameter>
+  <Parameter Name="slaveTorqueGain" Value="1"></Parameter>
+  <Parameter Name="rampDuration" Unit="s"></Parameter>
+  <Parameter Name="constSpeedDuration"></Parameter>
+  <Parameter Name="offset" Unit="%" Value="1"></Parameter>
+  <Parameter Name="slaveDroop" Unit="%" Value="1"></Parameter>
+  <Parameter Name="masterDroop" Unit="%" Value="0"></Parameter>
  </Parameters>
  <Ports>
   <Port Input="0" Model="VaconLib.VaconMarineAppFCPort" Name="FC1">
    <Connections>
-    <Connection Input="0" Name="MapEnable"/>
-    <Connection Input="0" Name="MapModeSelect"/>
-    <Connection Input="0" Name="MapSpeedRef"/>
-    <Connection Input="0" Name="MapTorqueRef"/>
-    <Connection Input="0" Name="MapTorqueLimitMotoring"/>
-    <Connection Input="0" Name="MapTorqueLimitGeneratoring"/>
-    <Connection Input="0" Name="MapPowerLimitMotoring"/>
-    <Connection Input="0" Name="MapPowerLimitGeneratoring"/>
-    <Connection Input="0" Name="MapLoadDrooping"/>
-    <Connection Input="0" Name="MapMasterFollowerMode"/>
-    <Connection Input="1" Name="MapStatusFlags"/>
-    <Connection Input="1" Name="MapSpeedActual"/>
-    <Connection Input="1" Name="MapTorqueActual"/>
+    <Connection Input="0" Name="MapEnable"></Connection>
+    <Connection Input="0" Name="MapModeSelect"></Connection>
+    <Connection Input="0" Name="MapSpeedRef"></Connection>
+    <Connection Input="0" Name="MapTorqueRef"></Connection>
+    <Connection Input="0" Name="MapTorqueLimitMotoring"></Connection>
+    <Connection Input="0" Name="MapTorqueLimitGeneratoring"></Connection>
+    <Connection Input="0" Name="MapPowerLimitMotoring"></Connection>
+    <Connection Input="0" Name="MapPowerLimitGeneratoring"></Connection>
+    <Connection Input="0" Name="MapLoadDrooping"></Connection>
+    <Connection Input="0" Name="MapMasterFollowerMode"></Connection>
+    <Connection Input="1" Name="MapStatusFlags"></Connection>
+    <Connection Input="1" Name="MapSpeedActual"></Connection>
+    <Connection Input="1" Name="MapTorqueActual"></Connection>
    </Connections>
   </Port>
   <Port Input="0" Model="VaconLib.VaconMarineAppFCPort" Name="FC2">
    <Connections>
-    <Connection Input="1" Name="MapStatusFlags"/>
-    <Connection Input="1" Name="MapSpeedActual"/>
-    <Connection Input="1" Name="MapTorqueActual"/>
-    <Connection Input="0" Name="MapMasterFollowerMode"/>
-    <Connection Input="0" Name="MapLoadDrooping"/>
-    <Connection Input="0" Name="MapEnable"/>
-    <Connection Input="0" Name="MapModeSelect"/>
-    <Connection Input="0" Name="MapSpeedRef"/>
-    <Connection Input="0" Name="MapTorqueRef"/>
-    <Connection Input="0" Name="MapTorqueLimitMotoring"/>
-    <Connection Input="0" Name="MapTorqueLimitGeneratoring"/>
-    <Connection Input="0" Name="MapPowerLimitMotoring"/>
-    <Connection Input="0" Name="MapPowerLimitGeneratoring"/>
+    <Connection Input="1" Name="MapStatusFlags"></Connection>
+    <Connection Input="1" Name="MapSpeedActual"></Connection>
+    <Connection Input="1" Name="MapTorqueActual"></Connection>
+    <Connection Input="0" Name="MapMasterFollowerMode"></Connection>
+    <Connection Input="0" Name="MapLoadDrooping"></Connection>
+    <Connection Input="0" Name="MapEnable"></Connection>
+    <Connection Input="0" Name="MapModeSelect"></Connection>
+    <Connection Input="0" Name="MapSpeedRef"></Connection>
+    <Connection Input="0" Name="MapTorqueRef"></Connection>
+    <Connection Input="0" Name="MapTorqueLimitMotoring"></Connection>
+    <Connection Input="0" Name="MapTorqueLimitGeneratoring"></Connection>
+    <Connection Input="0" Name="MapPowerLimitMotoring"></Connection>
+    <Connection Input="0" Name="MapPowerLimitGeneratoring"></Connection>
    </Connections>
   </Port>
   <Port Input="0" Model="VaconLib.VaconMarineAppFCPort" Name="FC3">
    <Connections>
-    <Connection Input="1" Name="MapStatusFlags"/>
-    <Connection Input="1" Name="MapSpeedActual"/>
-    <Connection Input="1" Name="MapTorqueActual"/>
-    <Connection Input="0" Name="MapEnable"/>
-    <Connection Input="0" Name="MapModeSelect"/>
-    <Connection Input="0" Name="MapSpeedRef"/>
-    <Connection Input="0" Name="MapTorqueRef"/>
-    <Connection Input="0" Name="MapTorqueLimitMotoring"/>
-    <Connection Input="0" Name="MapTorqueLimitGeneratoring"/>
-    <Connection Input="0" Name="MapPowerLimitMotoring"/>
-    <Connection Input="0" Name="MapPowerLimitGeneratoring"/>
-    <Connection Input="0" Name="MapLoadDrooping"/>
-    <Connection Input="0" Name="MapMasterFollowerMode"/>
+    <Connection Input="1" Name="MapStatusFlags"></Connection>
+    <Connection Input="1" Name="MapSpeedActual"></Connection>
+    <Connection Input="1" Name="MapTorqueActual"></Connection>
+    <Connection Input="0" Name="MapEnable"></Connection>
+    <Connection Input="0" Name="MapModeSelect"></Connection>
+    <Connection Input="0" Name="MapSpeedRef"></Connection>
+    <Connection Input="0" Name="MapTorqueRef"></Connection>
+    <Connection Input="0" Name="MapTorqueLimitMotoring"></Connection>
+    <Connection Input="0" Name="MapTorqueLimitGeneratoring"></Connection>
+    <Connection Input="0" Name="MapPowerLimitMotoring"></Connection>
+    <Connection Input="0" Name="MapPowerLimitGeneratoring"></Connection>
+    <Connection Input="0" Name="MapLoadDrooping"></Connection>
+    <Connection Input="0" Name="MapMasterFollowerMode"></Connection>
    </Connections>
   </Port>
   <Port Connected="0" DataConsistency="1" Description="Simple CANOpen encoder port" Input="1" Model="AntiBacklashLib.EncoderPort" Name="ENC1" RolePermissions="" Routing="">
    <Connections>
-    <Connection Name="Mapposition" RemoteName=".TPDO1.Position"/>
+    <Connection Name="Mapposition" RemoteName=".TPDO1.Position"></Connection>
    </Connections>
   </Port>
  </Ports>
  <States>
-  <State Name="Debug"/>
-  <State Description="" Name="PositionTest"/>
-  <State Name="SpeedTimerTest"/>
+  <State Name="Debug"></State>
+  <State Description="" Name="PositionTest"></State>
+  <State Name="SpeedTimerTest"></State>
  </States>
  <StateTransitions>
-  <StateTransition Description="" FromState="Null" Name="NullToPositionTest" ToState="PositionTest"/>
-  <StateTransition Description="" FromState="PositionTest" Name="PositionTestToNull" ToState="Null"/>
-  <StateTransition FromState="Null" Name="NullToRunning" ToState="Running"/>
-  <StateTransition FromState="Running" Name="RunningToNull" ToState="Null"/>
-  <StateTransition FromState="Null" Name="NullToSpeedTimerTest" ToState="SpeedTimerTest"/>
-  <StateTransition FromState="SpeedTimerTest" Name="SpeedTimerTestToNull" ToState="Null"/>
+  <StateTransition Description="" FromState="Null" Name="NullToPositionTest" ToState="PositionTest"></StateTransition>
+  <StateTransition Description="" FromState="PositionTest" Name="PositionTestToNull" ToState="Null"></StateTransition>
+  <StateTransition FromState="Null" Name="NullToRunning" ToState="Running"></StateTransition>
+  <StateTransition FromState="Running" Name="RunningToNull" ToState="Null"></StateTransition>
+  <StateTransition FromState="Null" Name="NullToSpeedTimerTest" ToState="SpeedTimerTest"></StateTransition>
+  <StateTransition FromState="SpeedTimerTest" Name="SpeedTimerTestToNull" ToState="Null"></StateTransition>
  </StateTransitions>
+  <Element Description="The Frequency [Hz] that the component statemachine is run at." DisplayHint="Important" Model="PropertyAsElement" Name="fs" Required="1" Type="double" Unit="Hz" Value="100"></Element>
 </Model>

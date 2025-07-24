@@ -62,6 +62,9 @@ void AntiBacklashController::Create(const char* fullName)
     slaveTorqueGain.Create("slaveTorqueGain",this);
     rampDuration.Create("rampDuration",this);
     constSpeedDuration.Create("constSpeedDuration",this);
+    offset.Create("offset",this);
+    slaveDroop.Create("slaveDroop",this);
+    masterDroop.Create("masterDroop",this);
     enabled.Create("enabled",this);
     antiBacklashEnabled.Create("antiBacklashEnabled",this);
     timer.Create("timer",this);
@@ -343,9 +346,22 @@ void AntiBacklashController::ProcessSpeedTimerTest()
     speedCmd = newSpeedCmd; // Update the signal for monitoring
     motorRoles = chooseMasterSlave(speedCmd);
     double absSpeed = std::abs(speedCmd);
+    double masterSpeed = absSpeed;
+    // double slaveSpeed = -absSpeed;
+    double slaveSpeed = absSpeed;
+    motorRoles.slave->LoadDrooping = 0.0;
+    motorRoles.master->LoadDrooping = 0.0;
+    if (antiBacklashEnabled) {
+        // masterSpeed = absSpeed * (1 + (offset / 100));
+        // slaveSpeed = -absSpeed * (1 - (offset / 100));
+        motorRoles.slave->LoadDrooping = slaveDroop;
+        motorRoles.master->LoadDrooping = masterDroop;
+    }
+
     double slaveTorque = adaptiveSlaveTorque(absSpeed);
 
-    setMasterSlaveSpeed(motorRoles, absSpeed, absSpeed);
+
+    setMasterSlaveSpeed(motorRoles, masterSpeed, slaveSpeed);
     setMasterSlaveTorque(motorRoles, maxTorque, slaveTorque);
     previousSpeedRef = absSpeed;
 }
