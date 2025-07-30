@@ -62,8 +62,8 @@ protected:
     CDPSignal<bool> startAntibacklashTestButton;
     CDPSignal<bool> debugMode;
     CDPSignal<double> speedCmd;
-    CDPSignal<double> scaledEncSpeed;
-    CDPSignal<double> scaledEncPosition;
+    CDPSignal<double> ENC1Speed;
+    CDPSignal<double> ENC1Position;
     CDPSignal<double> FC1Speed;
     CDPSignal<double> FC2Speed;
     CDPSignal<double> FC1Torque;
@@ -76,9 +76,9 @@ protected:
 
     MotorRoles motorRoles;
 
-    double encSpeedScaler(const EncoderPort& rawEnc) { return double(rawEnc.speed) / 9.549297; }
-    double encoderRawToDeg_F5888(const EncoderPort& rawEnc) { return static_cast<double>(rawEnc.position) * (360.0 / 65535); }
-    void scaleFCSpeedTorque(MotorRoles& roles);
+    double encSpeedScaler(const EncoderPort& enc) { return double(enc.speed) / 9.549297; }
+    double encoderRawToDeg_F5888(const EncoderPort& enc) { return double(enc.position) * (360.0 / 65535); }
+    void scalePlotSignals(MotorRoles& roles);
     void initFC(VaconLib::VaconMarineAppFCPort& FC, bool enable);
     double speedController(double errorDeg);
 
@@ -98,7 +98,7 @@ protected:
     double previousSpeedRef;
 
     int testPhase;
-    int cycleCounter;
+    int testCycle;
     double originalMaxSpeed;
     double currentTestMaxSpeed;
 
