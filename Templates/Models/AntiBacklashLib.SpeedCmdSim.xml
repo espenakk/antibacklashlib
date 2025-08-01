@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Model Name="AntiBacklashLib.SpeedCmdSim">
+ <ModelTypeClass>C++</ModelTypeClass>
+ <BaseModel>CDPComponent</BaseModel>
+ <Element Name="Priority" Value="normal"></Element>
+ <Element Name="fs" Value="100"></Element>
+ <Attributes>
+  <Attribute Name="Description" Type="string" Value="Simulates user speed commands"></Attribute>
+    <Attribute Name="Model" Value="AntiBacklashLib.SpeedCmdSim"></Attribute>
+ </Attributes>
+ <Signals>
+  <Signal Description="" Input="1" Model="CDPSignal&lt;bool&gt;" Name="Start" Type="bool" Unit="" Value="0"></Signal>
+ </Signals>
+ <Parameters>
+  <Parameter Description="" Name="RampDuration" Unit="s" Value="0.1"></Parameter>
+  <Parameter Description="" Name="ConstSpeedDuration" Unit="s" Value="2.0"></Parameter>
+  <Parameter Description="" Name="MaxSpeed" Unit="rad/s" Value="1.25"></Parameter>
+ </Parameters>
+ <States>
+  <State Name="Running"></State>
+ </States>
+ <StateTransitions>
+  <StateTransition FromState="Null" Name="NullToRunning" ToState="Running"></StateTransition>
+  <StateTransition FromState="Running" Name="RunningToNull" ToState="Null"></StateTransition>
+ </StateTransitions>
+ <Ports>
+  <Port Input="0" Model="AntiBacklashLib.SimCmdPort" Name="SimCmd"></Port>
+ </Ports>
+</Model>

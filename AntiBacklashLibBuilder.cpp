@@ -4,6 +4,8 @@ AntiBacklashLibBuilder implementation.
 
 #include "AntiBacklashController.h"
 #include "EncoderPort.h"
+#include "SpeedCmdSim.h"
+#include "SimCmdPort.h"
 #include "AntiBacklashLibBuilder.h"
 
 using namespace AntiBacklashLib;
@@ -34,6 +36,11 @@ CDPComponent* AntiBacklashLibBuilder::CreateNewComponent(const std::string& type
     if (type=="AntiBacklashLib.AntiBacklashController")
         return new AntiBacklashController;
     
+    
+    
+    if (type=="AntiBacklashLib.SpeedCmdSim")
+        return new SpeedCmdSim;
+    
     return CDPBuilder::CreateNewComponent(type);
 }
 
@@ -57,6 +64,11 @@ CDPObject* AntiBacklashLibBuilder::CreateNewObject(const std::string& type)
     
     if (type=="AntiBacklashLib.EncoderPort")
         return new EncoderPort;
+    
+    
+    
+    if (type=="AntiBacklashLib.SimCmdPort")
+        return new SimCmdPort;
     
     return CDPBuilder::CreateNewObject(type);
 }

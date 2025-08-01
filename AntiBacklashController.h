@@ -1,6 +1,7 @@
 #ifndef ANTIBACKLASHLIB_ANTIBACKLASHCONTROLLER_H
 #define ANTIBACKLASHLIB_ANTIBACKLASHCONTROLLER_H
 
+#include <SimCmdPort.h>
 #include <CDPAlarm/CDPAlarm.h>
 #include <CDPParameter/CDPParameter.h>
 #include <CDPSystem/Base/CDPComponent.h>
@@ -28,79 +29,60 @@ public:
     void Configure(const char* componentXML) override;
 
     void ProcessNull() override;
-    void ProcessDebug();
-    void ProcessPositionTest();
-    void ProcessSpeedTimerTest();
-    bool TransitionNullToDebug();
-    bool TransitionDebugToNull();
-    bool TransitionNullToPositionTest();
-    bool TransitionPositionTestToNull();
-    bool TransitionNullToSpeedTimerTest();
-    bool TransitionSpeedTimerTestToNull();
+    void ProcessSpeedCmdOffset();
+    void ProcessDecelTorque();
+    void ProcessConstTorque();
+    bool TransitionNullToSpeedCmdOffset();
+    bool TransitionSpeedCmdOffsetToNull();
+    bool TransitionNullToDecelTorque();
+    bool TransitionDecelTorqueToNull();
+    bool TransitionNullToConstTorque();
+    bool TransitionConstTorqueToNull();
 
 protected:
     VaconLib::VaconMarineAppFCPort FC1;
     VaconLib::VaconMarineAppFCPort FC2;
     VaconLib::VaconMarineAppFCPort FC3;
     EncoderPort ENC1;
-    CDPParameter loadTorqueLimit;
-    CDPParameter maxTorque;
-    CDPParameter maxSpeed;
-    CDPParameter minSpeed;
-    CDPParameter slowdownRange;
-    CDPParameter degMargin;
-    CDPParameter slaveTorqueBase;
-    CDPParameter slaveTorqueGain;
-    CDPParameter rampDuration;
-    CDPParameter constSpeedDuration;
-    CDPParameter offset;
-    CDPParameter slaveDroop;
-    CDPParameter masterDroop;
+    SimCmdPort SimCmd;
+    CDPParameter Offset;
+    CDPParameter SlaveTorqueBase;
+    CDPParameter SlaveTorqueGain;
+    CDPParameter LoadTorqueLimit;
+    CDPParameter MaxTorque;
+    CDPParameter SlaveDroop;
+    CDPParameter MasterDroop;
 
-    CDPSignal<bool> enabled;
-    CDPSignal<bool> antiBacklashEnabled;
-    CDPSignal<bool> startAntibacklashTestButton;
-    CDPSignal<bool> debugMode;
-    CDPSignal<double> speedCmd;
+    
+    CDPSignal<double> SpeedRef;
     CDPSignal<double> ENC1Speed;
-    CDPSignal<double> ENC1Position;
     CDPSignal<double> FC1Speed;
     CDPSignal<double> FC2Speed;
     CDPSignal<double> FC1Torque;
     CDPSignal<double> FC2Torque;
     CDPSignal<double> FC3Torque;
-    CDPSignal<double> FCSpeedRef;
+    CDPSignal<double> ENC1Position;
+    CDPSignal<bool> Running;
+    CDPSignal<int> TestIndex;
+    CDPSignal<int> AntiBacklashMode;
 
-    CDPTimer timer;
-    CDPSignal<double> elapsedTime;
-
+    double previousSpeedRef;
     MotorRoles motorRoles;
 
-    double encSpeedScaler(const EncoderPort& enc) { return double(enc.speed) / 9.549297; }
-    double encoderRawToDeg_F5888(const EncoderPort& enc) { return double(enc.position) * (360.0 / 65535); }
-    void scalePlotSignals(MotorRoles& roles);
-    void initFC(VaconLib::VaconMarineAppFCPort& FC, bool enable);
-    double speedController(double errorDeg);
-
-    double adaptiveSlaveTorque(double& speedCmd);
-
-    
     MotorRoles chooseMasterSlave(double error);
+    void scalePlotSignals(MotorRoles& roles);
+    void initFCs(MotorRoles& roles);
     void setMasterSlaveTorque(MotorRoles& roles, double masterTorque, double slaveTorque);
     void setMasterSlaveSpeed(MotorRoles& roles, double masterSpeed, double slaveSpeed);
+    void setMasterSlaveDroop(MotorRoles& roles, double masterDroop, double slaveDroop);
     void enableLoad(MotorRoles& roles, bool enable);
     void enableMasterSlave(MotorRoles& roles, bool enable);
     void stopAllMotors(MotorRoles& roles);
 
-    double startPos;
-    bool gotStartPos = false;
+    double adaptiveSlaveTorque(double& speedCmd);
 
-    double previousSpeedRef;
-
-    int testPhase;
-    int testCycle;
-    double originalMaxSpeed;
-    double currentTestMaxSpeed;
+    double encSpeedScaler(const EncoderPort& enc) { return double(enc.speed) / 9.549297; }
+    double encoderRawToDeg_F5888(const EncoderPort& enc) { return double(enc.position) * (360.0 / 65535); }
 
     using CDPComponent::fs;
     using CDPComponent::requestedState;

@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Model Name="AntiBacklashLib.SimCmdPort">
+ <ModelTypeClass>C++</ModelTypeClass>
+ <BaseModel>CDPPort</BaseModel>
+ <Attributes>
+  <Attribute Name="Description" Type="string" Value="SimCmdPort"></Attribute>
+  <Attribute Description="" LogEventOnChange="0" Name="SpeedCMD" RouteMethod="RoutePeriodic" SaveOnChange="0" Type="double"></Attribute>
+  <Attribute Description="" LogEventOnChange="0" Name="AntiBacklashEnabled" RouteMethod="RouteEvent" SaveOnChange="0" Type="bool"></Attribute>
+  <Attribute Description="" LogEventOnChange="0" Name="EnableFCs" RouteMethod="RouteEvent" SaveOnChange="0" Type="bool"></Attribute>
+    <Attribute Name="Model" Value="AntiBacklashLib.SimCmdPort"></Attribute>
+ </Attributes>
+ <Connections>
+  <Connection Input="1" LocalName=".SpeedCMD" Model="CDPPortConnection" Name="MapSpeedCMD"></Connection>
+  <Connection Input="1" LocalName=".AntiBacklashEnabled" Model="CDPPortConnection" Name="MapAntiBacklashEnabled"></Connection>
+  <Connection Input="1" LocalName=".EnableFCs" Model="CDPPortConnection" Name="MapEnableFCs"></Connection>
+ </Connections>
+</Model>

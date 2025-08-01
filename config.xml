@@ -1951,7 +1951,7 @@
        <value type="QString" key="id">EncoderPortNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
         <value type="qlonglong" key="x">200</value>
-        <value type="qlonglong" key="y">723</value>
+        <value type="qlonglong" key="y">671</value>
        </valuemap>
       </valuemap>
       <valuemap type="QVariantMap">
@@ -1964,8 +1964,8 @@
       <valuemap type="QVariantMap">
        <value type="QString" key="id">KublerF5888NodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
-        <value type="double" key="x">346.6666666666667</value>
-        <value type="qlonglong" key="y">2272</value>
+        <value type="qlonglong" key="x">0</value>
+        <value type="double" key="y">3080.6666666666665</value>
        </valuemap>
       </valuemap>
       <valuemap type="QVariantMap">
@@ -1993,21 +1993,21 @@
        <value type="QString" key="id">FC1NodeNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
         <value type="qlonglong" key="x">0</value>
-        <value type="qlonglong" key="y">2272</value>
+        <value type="qlonglong" key="y">2699</value>
        </valuemap>
       </valuemap>
       <valuemap type="QVariantMap">
        <value type="QString" key="id">FC1PortNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
         <value type="qlonglong" key="x">200</value>
-        <value type="qlonglong" key="y">917</value>
+        <value type="qlonglong" key="y">1344</value>
        </valuemap>
       </valuemap>
       <valuemap type="QVariantMap">
        <value type="QString" key="id">VaconFC1NodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
        <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">200</value>
-        <value type="qlonglong" key="y">1111</value>
+        <value type="double" key="x">144.4229205175601</value>
+        <value type="double" key="y">1643.404805914972</value>
        </valuemap>
       </valuemap>
       <valuemap type="QVariantMap">
@@ -2024,26 +2024,75 @@
         <value type="double" key="y">2653.6666666666665</value>
        </valuemap>
       </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">SpeedCMDTimerSimNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">1059</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCTestSimPortNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">100</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPortNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">100</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">SignalPlotterNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">1097</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">SimCmdPortNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">865</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">SpeedCmdSimNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">1059</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">SimPortNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">100</value>
+       </valuemap>
+      </valuemap>
      </valuelist>
      <valuemap type="QVariantMap" key="settings">
       <valuelist type="QVariantList" key="BlockDiagram/ViewMatrix">
-       <value type="double">0.301966342306813</value>
+       <value type="double">0.6261574074074074</value>
        <value type="qlonglong">0</value>
        <value type="qlonglong">0</value>
        <value type="qlonglong">0</value>
-       <value type="double">0.301966342306813</value>
+       <value type="double">0.6261574074074074</value>
        <value type="qlonglong">0</value>
        <value type="qlonglong">0</value>
        <value type="qlonglong">0</value>
        <value type="qlonglong">1</value>
       </valuelist>
       <valuelist type="QVariantList" key="BlockDiagram/ViewRect">
-       <value type="qlonglong">-960</value>
-       <value type="qlonglong">-775</value>
-       <value type="qlonglong">3295</value>
-       <value type="qlonglong">2954</value>
+       <value type="qlonglong">-937</value>
+       <value type="qlonglong">423</value>
+       <value type="qlonglong">1915</value>
+       <value type="qlonglong">1092</value>
       </valuelist>
-      <value type="bool" key="autoLayoutEnabled">true</value>
+      <value type="bool" key="autoLayoutEnabled">false</value>
      </valuemap>
     </valuemap>
     <value type="QString" key="id">AntiBacklashLib</value>
@@ -5551,177 +5600,6 @@
     <valuemap type="QVariantMap" key="data">
      <valuelist type="QVariantList" key="nodes">
       <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TelegrRcvdNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">0</value>
-        <value type="qlonglong" key="y">891</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TelegrSentNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">0</value>
-        <value type="double" key="y">1051.6666666666667</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.SendPeriodNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">0</value>
-        <value type="double" key="y">1212.3333333333335</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.RecvPeriodNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">0</value>
-        <value type="double" key="y">1373.0000000000002</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.NodeStateNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">0</value>
-        <value type="double" key="y">1533.666666666667</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.ErrorRegisterNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">0</value>
-        <value type="double" key="y">1694.3333333333337</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.ErrorCANNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">0</value>
-        <value type="double" key="y">1855.0000000000005</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.HeartbeatPTimeODEntryNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-269</value>
-        <value type="qlonglong" key="y">323</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.Operating ParametersNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-247</value>
-        <value type="qlonglong" key="y">479</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.Measuring units per revolutionNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-309</value>
-        <value type="qlonglong" key="y">518</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.Total number of measuring unitsNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-328</value>
-        <value type="qlonglong" key="y">401</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TPDO1 disableNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-192</value>
-        <value type="qlonglong" key="y">557</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TPDO2 disableNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-192</value>
-        <value type="qlonglong" key="y">596</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TPDO3 disableNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-192</value>
-        <value type="qlonglong" key="y">284</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TPDO4 disableNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-192</value>
-        <value type="qlonglong" key="y">245</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TPDO1 Clear number of entriesNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-323</value>
-        <value type="qlonglong" key="y">440</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TPDO1 mapping 1 (pos)NodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-264</value>
-        <value type="qlonglong" key="y">206</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TPDO1 Set number of entriesNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-307</value>
-        <value type="qlonglong" key="y">167</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old. TPDO1 transmission typeNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-280</value>
-        <value type="qlonglong" key="y">128</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TPDO1 - COB-IDNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-209</value>
-        <value type="qlonglong" key="y">89</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.Can-Bus TerminationNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-239</value>
-        <value type="qlonglong" key="y">50</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.Save All Bus ParametersNodeType.ComponentDataType.InternalDataDirection.Source</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">-270</value>
-        <value type="qlonglong" key="y">362</value>
-       </valuemap>
-      </valuemap>
-      <valuemap type="QVariantMap">
-       <value type="QString" key="id">KublerF5888_old.TPDO1NodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
-       <valuemap type="QVariantMap" key="position">
-        <value type="qlonglong" key="x">0</value>
-        <value type="double" key="y">2015.6666666666672</value>
-       </valuemap>
-      </valuemap>
-     </valuelist>
-     <valuemap type="QVariantMap" key="settings">
-      <value type="bool" key="autoLayoutEnabled">true</value>
-     </valuemap>
-    </valuemap>
-    <value type="QString" key="id">KublerF5888_old</value>
-   </valuemap>
-   <valuemap type="QVariantMap">
-    <valuemap type="QVariantMap" key="data">
-     <valuelist type="QVariantList" key="nodes">
-      <valuemap type="QVariantMap">
        <value type="QString" key="id">VaconFC1.FB Data Out 1 SelNodeType.ComponentDataType.InternalDataDirection.Source</value>
        <valuemap type="QVariantMap" key="position">
         <value type="qlonglong" key="x">-214</value>
@@ -6148,6 +6026,268 @@
     </valuemap>
     <value type="QString" key="id">VaconFC1</value>
    </valuemap>
+   <valuemap type="QVariantMap">
+    <valuemap type="QVariantMap" key="data">
+     <valuelist type="QVariantList" key="nodes">
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapSpeedRefNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">100</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapENC1SpeedNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">294</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapFC1SpeedNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">488</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapFC2SpeedNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">682</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapFC1TorqueNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">876</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapFC2TorqueNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">1070</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapFC3TorqueNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">1264</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapENC1PositionNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">1458</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapAntiBacklashEnabledNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">1652</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapOffsetNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">1846</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapBaseTorqueNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">2040</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapGainTorqueNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">2234</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapLoadTorqueNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">2428</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapMaxTorqueNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">2622</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapSlaveDroopNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">2816</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapMasterDroopNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">3010</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapRunningNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">3204</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MapTestIndexNodeType.ComponentDataType.InternalDataDirection.TwoWay</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">200</value>
+        <value type="qlonglong" key="y">3398</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MasterDroopNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-173</value>
+        <value type="double" key="y">668.3333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.FC2TorqueNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-160</value>
+        <value type="double" key="y">278.33333333333337</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.SlaveDroopNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-164</value>
+        <value type="double" key="y">629.3333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.LoadTorqueNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-166</value>
+        <value type="double" key="y">551.3333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.FC3TorqueNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-160</value>
+        <value type="double" key="y">317.33333333333337</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.TestIndexNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-149</value>
+        <value type="double" key="y">746.3333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.FC1SpeedNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-154</value>
+        <value type="double" key="y">161.33333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.MaxTorqueNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-160</value>
+        <value type="double" key="y">590.3333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.FC2SpeedNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-154</value>
+        <value type="double" key="y">200.33333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.RunningNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-135</value>
+        <value type="double" key="y">707.3333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.BaseTorqueNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-167</value>
+        <value type="double" key="y">473.33333333333337</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.OffsetNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-118</value>
+        <value type="double" key="y">434.33333333333337</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.ENC1PositionNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-180</value>
+        <value type="double" key="y">356.33333333333337</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.ENC1SpeedNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-168</value>
+        <value type="double" key="y">122.33333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.AntiBacklashEnabledNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-239</value>
+        <value type="double" key="y">395.33333333333337</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.SpeedRefNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-151</value>
+        <value type="double" key="y">83.33333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.FC1TorqueNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-160</value>
+        <value type="double" key="y">239.33333333333334</value>
+       </valuemap>
+      </valuemap>
+      <valuemap type="QVariantMap">
+       <value type="QString" key="id">ABCSignalLogPort.GainTorqueNodeType.LabelDataType.ExternalDataDirection.Source</value>
+       <valuemap type="QVariantMap" key="position">
+        <value type="qlonglong" key="x">-165</value>
+        <value type="double" key="y">512.3333333333334</value>
+       </valuemap>
+      </valuemap>
+     </valuelist>
+     <valuemap type="QVariantMap" key="settings">
+      <value type="bool" key="autoLayoutEnabled">true</value>
+     </valuemap>
+    </valuemap>
+    <value type="QString" key="id">ABCSignalLogPort</value>
+   </valuemap>
   </valuelist>
  </data>
  <data>
@@ -6175,7 +6315,7 @@
     <value type="bool" key="Collapsed">false</value>
     <value type="bool" key="FullyExpanded">false</value>
     <valuemap type="QVariantMap" key="Heights"/>
-    <value type="QByteArray" key="HorizontalHeader">000000ff00000000000000010000000100000000000000000000000000000000090100000000010000000000000064000005150000000901010001000000000000000000000000640000001a000000810000000000000009000000000000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000002590000000100000000000003e8000000006400000000</value>
+    <value type="QByteArray" key="HorizontalHeader">000000ff0000000000000001000000010000000000000000000000000000000009010000000001000000000000006400000c950000000901010001000000000000000000000000640000001a000000810000000000000009000000000000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000009d90000000100000000000003e8000000006400000000</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ArgumentMessagesMessageArgument">
     <value type="bool" key="Collapsed">false</value>
@@ -6193,7 +6333,7 @@
     <value type="bool" key="Collapsed">false</value>
     <value type="bool" key="FullyExpanded">false</value>
     <valuemap type="QVariantMap" key="Heights"/>
-    <value type="QByteArray" key="HorizontalHeader">000000ff0000000000000001000000010000000000000000000000000000000013010000000000010000000000000064000007ae0000001301010001000000000000000000000000640000001a0000008100000000000000130000000000000001000000000000010a0000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000003e8000000006400000000</value>
+    <value type="QByteArray" key="HorizontalHeader">000000ff000000000000000100000001000000000000000000000000000000001301000000000001000000000000006400000c950000001301010001000000000000000000000000640000001a0000008100000000000000130000000000000001000000000000010a00000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000006400000001000000000000054b0000000100000000000003e8000000006400000000</value>
    </valuemap>
    <valuemap type="QVariantMap" key="CanInterfaceCANOpenIOServer.Node">
     <value type="bool" key="Collapsed">false</value>
@@ -6244,13 +6384,13 @@
     <value type="bool" key="Collapsed">false</value>
     <value type="bool" key="FullyExpanded">true</value>
     <valuemap type="QVariantMap" key="Heights"/>
-    <value type="QByteArray" key="HorizontalHeader">000000ff00000000000000010000000100000000000000000000000000000000050100000001000000000000006400000c950000000501010001000000000000000000000000640000001a00000081000000000000000500000000000000010000000000000064000000010000000000000064000000010000000000000064000000010000000000000b690000000100000000000003e80000000b6900000000</value>
+    <value type="QByteArray" key="HorizontalHeader">000000ff00000000000000010000000100000000000000000000000000000000050100000001000000000000006400000e890000000501010001000000000000000000000000640000001a00000081000000000000000500000000000000010000000000000064000000010000000000000258000000010000000000000064000000010000000000000b690000000100000000000003e80000000b6900000000</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ModelsModel">
     <value type="bool" key="Collapsed">false</value>
     <value type="bool" key="FullyExpanded">false</value>
     <valuemap type="QVariantMap" key="Heights"/>
-    <value type="QByteArray" key="HorizontalHeader">000000ff000000000000000100000001000000000000000000000000000000000401000000010000000000000064000005150000000401010001000000000000000000000000640000001a0000008100000000000000040000000000000001000000000000006400000001000000000000006400000001000000000000044d0000000100000000000003e8000000006400000000</value>
+    <value type="QByteArray" key="HorizontalHeader">000000ff0000000000000001000000010000000000000000000000000000000004010000000100000000000000640000012c0000000401010001000000000000000000000000640000001a000000810000000000000004000000000000000100000000000000640000000100000000000000640000000100000000000000640000000100000000000003e8000000006400000000</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ModifiersCDPProperty">
     <value type="bool" key="Collapsed">false</value>
@@ -6280,7 +6420,7 @@
     <value type="bool" key="Collapsed">false</value>
     <value type="bool" key="FullyExpanded">true</value>
     <valuemap type="QVariantMap" key="Heights"/>
-    <value type="QByteArray" key="HorizontalHeader">000000ff00000000000000010000000100000000000000000000000000000000070100000001000000000000006400000e9c0000000701010001000000000000000000000000640000001a000000810000000000000007000000000000000100000000000001530000000100000000000000c5000000010000000000000064000000010000000000000064000000010000000000000133000000010000000000000a890000000100000000000003e80000000a8900000000</value>
+    <value type="QByteArray" key="HorizontalHeader">000000ff00000000000000010000000100000000000000000000000000000000070100000001000000000000006400000fe70000000701010001000000000000000000000000640000001a0000008100000000000000070000000000000001000000000000015300000001000000000000018c0000000100000000000000640000000100000000000000e8000000010000000000000133000000010000000000000a890000000100000000000003e80000000a8900000000</value>
    </valuemap>
    <valuemap type="QVariantMap" key="PropertiesCDPProperty">
     <value type="bool" key="Collapsed">false</value>
@@ -6340,7 +6480,7 @@
     <value type="bool" key="Collapsed">false</value>
     <value type="bool" key="FullyExpanded">true</value>
     <valuemap type="QVariantMap" key="Heights"/>
-    <value type="QByteArray" key="HorizontalHeader">000000ff00000000000000010000000000000001000000000000000000000000050100000001000000000000006400000c8a0000000501010001000000000000000000000000640000001a00000081000000000000000500000000000000010000000000000064000000010000000000000064000000010000000000000064000000010000000000000b5e0000000100000000000003e80000000b5e00000000</value>
+    <value type="QByteArray" key="HorizontalHeader">000000ff00000000000000010000000100000001000000000000000000000000050100000001000000000000006400000fc90000000501010001000000000000000000000000640000001a0000008100000000000000050000000000000001000000000000013a0000000100000000000000640000000100000000000002cd000000010000000000000b5e0000000100000000000003e80000000b5e00000000</value>
    </valuemap>
    <valuemap type="QVariantMap" key="TPDOCANOpenMaster.TPDO">
     <value type="bool" key="Collapsed">false</value>
