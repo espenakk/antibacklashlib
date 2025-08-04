@@ -17,12 +17,15 @@
   <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC2Torque" Type="double" Unit="Nm" Value="0.0"/>
   <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC3Torque" Type="double" Unit="Nm" Value="0.0"/>
   <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="ENC1Position" Type="double" Unit="°" Value="0.0"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC1Position" Type="double" Unit="°" Value="0.0"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC2Position" Type="double" Unit="°" Value="0.0"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC3Position" Type="double" Unit="°" Value="0.0"/>
   <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="Running" Type="bool"/>
   <Signal Input="0" Model="CDPSignal&lt;int&gt;" Name="TestIndex" Type="int"/>
  </Signals>
  <Parameters>
-  <Parameter Description="" Name="LoadTorqueLimit" Unit="Nm" Value="2.0"/>
-  <Parameter Description="" Name="MaxTorque" Unit="Nm" Value="10.0"/>
+  <Parameter Description="" Name="LoadTorqueLimit" Unit="Nm" Value="4.0"/>
+  <Parameter Description="" Name="MaxTorque" Unit="Nm" Value="3.0"/>
   <Parameter Description="" Name="SlaveTorqueBase" Unit="Nm" Value="0"/>
   <Parameter Description="" Name="SlaveTorqueGain" Unit="" Value="1"/>
   <Parameter Description="" Name="Offset" Unit="%" Value="1"/>

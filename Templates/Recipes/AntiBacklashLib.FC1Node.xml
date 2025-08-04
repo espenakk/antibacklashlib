@@ -27,7 +27,7 @@
         <ScalingPoint Model="Automation.ScalingPoint&lt;double&gt;" Name="P0"></ScalingPoint>
         <ScalingPoint Model="Automation.ScalingPoint&lt;double&gt;" Name="P1" InValue="10" OutValue="1"></ScalingPoint></Operator></CDPChannel>
     <CDPChannel Model="CDPSignalChannel&lt;unsigned short&gt;" Name="DINStatusWord" Description="DINStatusWord containing info about: Emergency-control, Brake Open feedback (ID 56)"></CDPChannel>
-    <CDPChannel Model="CDPSignalChannel&lt;short&gt;" Name="LastActiveFault" Description="Last Active Fault (ID 37)"></CDPChannel></TPDO>
+    <CDPChannel Model="CDPSignalChannel&lt;short&gt;" Name="ShaftAngle" Description="Shaft Angle (ID 1169)" Unit="degrees or radians?"></CDPChannel></TPDO>
   <RPDO Model="CANOpenMaster.RPDO" Name="RPDO21" Nr="21" COBID="1024" AdjustWithNodeAddress="1">
     <CDPChannel Input="1" Model="CDPSignalChannel&lt;unsigned short&gt;" Name="FBControlWord" Description="Control word"></CDPChannel>
     <CDPChannel Input="1" Model="CDPSignalChannel&lt;short&gt;" Name="SpeedRef" Description="Speed reference" Unit="%">

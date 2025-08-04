@@ -62,6 +62,9 @@ protected:
     CDPSignal<double> FC2Torque;
     CDPSignal<double> FC3Torque;
     CDPSignal<double> ENC1Position;
+    CDPSignal<double> FC1Position;
+    CDPSignal<double> FC2Position;
+    CDPSignal<double> FC3Position;
     CDPSignal<bool> Running;
     CDPSignal<int> TestIndex;
     CDPSignal<int> AntiBacklashMode;
@@ -83,6 +86,7 @@ protected:
 
     double encSpeedScaler(const EncoderPort& enc) { return double(enc.speed) / 9.549297; }
     double encoderRawToDeg_F5888(const EncoderPort& enc) { return double(enc.position) * (360.0 / 65535); }
+    double fcShaftRoundsAngleToDeg(const VaconLib::VaconMarineAppFCPort& fc) { return double(fc.ShaftRounds) * (360) + (double(fc.ShaftAngle)) * (180 / 3.14159265358979323846); } // Maybe ShaftAngle is in degrees already?
 
     using CDPComponent::fs;
     using CDPComponent::requestedState;
