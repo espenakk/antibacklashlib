@@ -90,11 +90,15 @@
    </Connections>
   </Port>
   <Port Description="" Model="AntiBacklashLib.SimCmdPort" Name="SimCmd"/>
+  <Port Model="AntiBacklashLib.ShaftPort" Name="S1"/>
+  <Port Model="AntiBacklashLib.ShaftPort" Name="S2"/>
+  <Port Model="AntiBacklashLib.ShaftPort" Name="S3"/>
  </Ports>
  <States>
   <State Description="" Name="SpeedCmdOffset"/>
   <State Description="" Name="DecelTorque"/>
   <State Name="ConstTorque"/>
+  <State Name="SlaveDrooping"/>
  </States>
  <StateTransitions>
   <StateTransition Description="" FromState="Null" Name="NullToSpeedCmdOffset" ToState="SpeedCmdOffset"/>
@@ -105,6 +109,8 @@
   <StateTransition FromState="SpeedTimerTest" Name="SpeedTimerTestToNull" ToState="Null"/>
   <StateTransition FromState="Null" Name="NullToConstTorque" ToState="ConstTorque"/>
   <StateTransition FromState="ConstTorque" Name="ConstTorqueToNull" ToState="Null"/>
+  <StateTransition FromState="Null" Name="NullToSlaveDrooping" ToState="SlaveDrooping"/>
+  <StateTransition FromState="SlaveDrooping" Name="SlaveDroopingToNull" ToState="Null"/>
  </StateTransitions>
  <Element Description="The Frequency [Hz] that the component statemachine is run at." DisplayHint="Important" Model="PropertyAsElement" Name="fs" Required="1" Type="double" Unit="Hz" Value="100"/>
 </Model>

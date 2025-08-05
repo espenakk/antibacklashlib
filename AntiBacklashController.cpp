@@ -58,6 +58,9 @@ void AntiBacklashController::Create(const char* fullName)
     FC3.Create("FC3",this);
     ENC1.Create("ENC1",this);
     SimCmd.Create("SimCmd",this);
+    S1.Create("S1",this);
+    S2.Create("S2",this);
+    S3.Create("S3",this);
     LoadTorqueLimit.Create("LoadTorqueLimit",this);
     MaxTorque.Create("MaxTorque",this);
     SlaveTorqueBase.Create("SlaveTorqueBase",this);
@@ -81,12 +84,15 @@ void AntiBacklashController::CreateModel()
     RegisterStateProcess("SpeedCmdOffset",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessSpeedCmdOffset,"");
     RegisterStateProcess("DecelTorque",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessDecelTorque,"");
     RegisterStateProcess("ConstTorque",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessConstTorque,"");
+    RegisterStateProcess("SlaveDrooping",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessSlaveDrooping,"");
     RegisterStateTransitionHandler("Null","SpeedCmdOffset",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToSpeedCmdOffset,"");
     RegisterStateTransitionHandler("SpeedCmdOffset","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionSpeedCmdOffsetToNull,"");
     RegisterStateTransitionHandler("Null","DecelTorque",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToDecelTorque,"");
     RegisterStateTransitionHandler("DecelTorque","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionDecelTorqueToNull,"");
     RegisterStateTransitionHandler("Null","ConstTorque",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToConstTorque,"");
     RegisterStateTransitionHandler("ConstTorque","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionConstTorqueToNull,"");
+    RegisterStateTransitionHandler("Null","SlaveDrooping",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToSlaveDrooping,"");
+    RegisterStateTransitionHandler("SlaveDrooping","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionSlaveDroopingToNull,"");
 }
 
 /*!
@@ -130,7 +136,7 @@ void AntiBacklashController::ProcessNull()
             requestedState = "SpeedCmdOffset";
             break;
         case 3:
-            requestedState = "SlaveDrooping"; // This mode is not implemented yet
+            requestedState = "SlaveDrooping";
             break;
         default:
             requestedState = "Null";
@@ -180,16 +186,18 @@ void AntiBacklashController::ProcessDecelTorque()
     double masterSpeed = absSpeed;
     double slaveSpeed = -absSpeed;
     double masterTorque = MaxTorque;
-    double slaveTorque = adaptiveSlaveTorque(absSpeed);
+    double slaveTorque;
     double masterDroop;
     double slaveDroop;
 
     if (SimCmd.AntiBacklashEnabled) {
         masterDroop = MasterDroop;
         slaveDroop = SlaveDroop;
+        slaveTorque = adaptiveSlaveTorque(absSpeed);
     } else {
         masterDroop = 0.0;
         slaveDroop = 0.0;
+        slaveTorque = MaxTorque;
     }
 
     setMasterSlaveSpeed(motorRoles, masterSpeed, slaveSpeed);
@@ -198,8 +206,7 @@ void AntiBacklashController::ProcessDecelTorque()
     previousSpeedRef = absSpeed;
 }
 
-
-void AntiBacklashController::ProcessConstTorque() // Kan teste med drooping hvor slaveTorque er lik MaxTorque
+void AntiBacklashController::ProcessConstTorque()
 {
     if (!SimCmd.EnableFCs) {
         requestedState = "Null";
@@ -261,34 +268,34 @@ void AntiBacklashController::ProcessSpeedCmdOffset()
     setMasterSlaveDroop(motorRoles, masterDroop, slaveDroop);
 }
 
-// void AntiBacklashController::ProcessSlaveDrooping() // Kan teste med drooping hvor slaveTorque er lik MaxTorque
-// {
-//     if (!SimCmd.EnableFCs) {
-//         requestedState = "Null";
-//     }
-//     scalePlotSignals(motorRoles);
+void AntiBacklashController::ProcessSlaveDrooping()
+{
+    if (!SimCmd.EnableFCs) {
+        requestedState = "Null";
+    }
+    scalePlotSignals(motorRoles);
 
-//     motorRoles = chooseMasterSlave(SimCmd.SpeedCMD);
-//     double absSpeed = std::abs(SimCmd.SpeedCMD);
-//     double masterSpeed = absSpeed;
-//     double slaveSpeed = -absSpeed;
-//     double masterTorque = MaxTorque;
-//     double slaveTorque = MaxTorque;
-//     double masterDroop;
-//     double slaveDroop;
+    motorRoles = chooseMasterSlave(SimCmd.SpeedCMD);
+    double absSpeed = std::abs(SimCmd.SpeedCMD);
+    double masterSpeed = absSpeed;
+    double slaveSpeed = -absSpeed;
+    double masterTorque = MaxTorque;
+    double slaveTorque = MaxTorque;
+    double masterDroop;
+    double slaveDroop;
 
-//     if (SimCmd.AntiBacklashEnabled) {
-//         masterDroop = MasterDroop;
-//         slaveDroop = SlaveDroop;
-//     } else {
-//         masterDroop = 0.0;
-//         slaveDroop = 0.0;
-//     }
+    if (SimCmd.AntiBacklashEnabled) {
+        masterDroop = MasterDroop;
+        slaveDroop = SlaveDroop;
+    } else {
+        masterDroop = 0.0;
+        slaveDroop = 0.0;
+    }
 
-//     setMasterSlaveSpeed(motorRoles, masterSpeed, slaveSpeed);
-//     setMasterSlaveTorque(motorRoles, masterTorque, slaveTorque);
-//     setMasterSlaveDroop(motorRoles, masterDroop, slaveDroop);
-// }
+    setMasterSlaveSpeed(motorRoles, masterSpeed, slaveSpeed);
+    setMasterSlaveTorque(motorRoles, masterTorque, slaveTorque);
+    setMasterSlaveDroop(motorRoles, masterDroop, slaveDroop);
+}
 
 bool AntiBacklashController::TransitionNullToDecelTorque()
 {
@@ -297,6 +304,13 @@ bool AntiBacklashController::TransitionNullToDecelTorque()
         enableLoad(motorRoles, true);
         TestIndex = TestIndex + 1;
         Running = true;
+        encStartAngle = encoderRawToDeg_F5888(ENC1);
+        FC1StartAngle = fcShaftRoundsAngleToDeg(S1);
+        FC2StartAngle = fcShaftRoundsAngleToDeg(S2);
+        FC3StartAngle = fcShaftRoundsAngleToDeg(S3);
+        lastFC1Position = 0.0;
+        lastFC2Position = 0.0;
+        lastFC3Position = 0.0;
         return true;
     }
     return false;
@@ -319,6 +333,13 @@ bool AntiBacklashController::TransitionNullToConstTorque()
         enableLoad(motorRoles, true);
         TestIndex = TestIndex + 1;
         Running = true;
+        encStartAngle = encoderRawToDeg_F5888(ENC1);
+        FC1StartAngle = fcShaftRoundsAngleToDeg(S1);
+        FC2StartAngle = fcShaftRoundsAngleToDeg(S2);
+        FC3StartAngle = fcShaftRoundsAngleToDeg(S3);
+        lastFC1Position = 0.0;
+        lastFC2Position = 0.0;
+        lastFC3Position = 0.0;
         return true;
     }
     return false;
@@ -341,12 +362,50 @@ bool AntiBacklashController::TransitionNullToSpeedCmdOffset()
         enableLoad(motorRoles, true);
         TestIndex = TestIndex + 1;
         Running = true;
+        encStartAngle = encoderRawToDeg_F5888(ENC1);
+        FC1StartAngle = fcShaftRoundsAngleToDeg(S1);
+        FC2StartAngle = fcShaftRoundsAngleToDeg(S2);
+        FC3StartAngle = fcShaftRoundsAngleToDeg(S3);
+        lastFC1Position = 0.0;
+        lastFC2Position = 0.0;
+        lastFC3Position = 0.0;
         return true;
     }
     return false;
 }
 
 bool AntiBacklashController::TransitionSpeedCmdOffsetToNull()
+{
+    if(requestedState=="Null") {
+        stopAllMotors(motorRoles);
+        Running = false;
+        return true;
+    }
+    return false;
+}
+
+bool AntiBacklashController::TransitionNullToSlaveDrooping()
+{
+    if(requestedState=="SlaveDrooping") {
+        enableMasterSlave(motorRoles, true);
+        enableLoad(motorRoles, true);
+        TestIndex = TestIndex + 1;
+        Running = true;
+        encStartAngle = encoderRawToDeg_F5888(ENC1);
+        FC1StartAngle = fcShaftRoundsAngleToDeg(S1);
+        FC2StartAngle = fcShaftRoundsAngleToDeg(S2);
+        FC3StartAngle = fcShaftRoundsAngleToDeg(S3);
+        lastFC1Position = 0.0;
+        lastFC2Position = 0.0;
+        lastFC3Position = 0.0;
+        return true;
+    }
+    return false;
+}
+
+
+
+bool AntiBacklashController::TransitionSlaveDroopingToNull()
 {
     if(requestedState=="Null") {
         stopAllMotors(motorRoles);
@@ -391,12 +450,8 @@ MotorRoles AntiBacklashController::chooseMasterSlave(double error) {
 }
 
 double AntiBacklashController::adaptiveSlaveTorque(double& speedCmd) {
-    double acceleration = (speedCmd - previousSpeedRef) / ts;
-    if (acceleration < 0.0)  {
-        double dynamicTorque = SlaveTorqueGain * std::max(0.0, -acceleration);
-        return SlaveTorqueBase - dynamicTorque;
-    }
-    return MaxTorque;
+    double dynamicTorque = speedCmd * (1 / SlaveTorqueGain);
+    return SlaveTorqueBase - dynamicTorque;
 }
 
 void AntiBacklashController::setMasterSlaveTorque(MotorRoles& roles, double masterTorque, double slaveTorque) {
@@ -444,12 +499,28 @@ void AntiBacklashController::scalePlotSignals(MotorRoles& roles) {
     FC1Torque = FC1.TorqueActual;
     FC2Torque = FC2.TorqueActual;
     FC3Torque = -std::abs(FC3.TorqueActual);
-    FC1Position = fcShaftRoundsAngleToDeg(FC1);
-    FC2Position = fcShaftRoundsAngleToDeg(FC2);
-    FC3Position = fcShaftRoundsAngleToDeg(FC3);
+    FC1Position = fcShaftRoundsAngleToDeg(S1) - FC1StartAngle;
+    FC2Position = -(fcShaftRoundsAngleToDeg(S2) - FC2StartAngle);
+    FC3Position = fcShaftRoundsAngleToDeg(S3) - FC3StartAngle;
+
+    if (std::abs(FC1Position - lastFC1Position) < 300) { // Should probably just filter the data later instead
+        lastFC1Position = FC1Position;
+    } else {
+        FC1Position = lastFC1Position;
+    }
+    if (std::abs(FC2Position - lastFC2Position) < 300) {
+        lastFC2Position = FC2Position;
+    } else {
+        FC2Position = lastFC2Position;
+    }
+    if (std::abs(FC3Position - lastFC3Position) < 300) {
+        lastFC3Position = FC3Position;
+    } else {
+        FC3Position = lastFC3Position;
+    }
 
     ENC1Speed = -encSpeedScaler(ENC1);
-    ENC1Position = encoderRawToDeg_F5888(ENC1);
+    ENC1Position = encoderRawToDeg_F5888(ENC1) - encStartAngle;
 
     if (roles.master->GetNodeID() == FC1.GetNodeID()) {
         SpeedRef = roles.master->SpeedRef;

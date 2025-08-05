@@ -1,18 +1,17 @@
-<Model Name="AntiBacklashLib.VaconFC1">
+<Model Name="AntiBacklashLib.VaconFC">
   <BaseModel>VaconLib.VaconMarineAppFC</BaseModel>
   <ModelTypeClass>XML</ModelTypeClass>
 
   <Attributes>
     <Attribute Name="Description" Value="Interfaces a Vacon FC with Marine Application, using OPT-C6 CANopen option board."></Attribute>
-    <Attribute Name="Model" Value="AntiBacklashLib.VaconFC1"></Attribute>
+    <Attribute Name="Model" Value="AntiBacklashLib.VaconFC"></Attribute>
   </Attributes>
   <Element Description="Name of CAN node. Must be specified if different from component shortname." Model="PropertyAsElement" Name="NodeName" Required="1" Value="FC1"></Element>
 
   <Ports>
 
-    <Port Name="Drive" Routing="AntiBacklashApp.AntiBacklashController.FC1"></Port>
-    
-    <Port Model="VaconLib.FCIOPort" Name="FCIOPort" Routing="AntiBacklashApp.CANOpenPCIIOServer.FC1"></Port>
+    <Port Name="Drive" Routing=""></Port>
+    <Port Model="AntiBacklashLib.FCIOPort" Name="FCIOPort" Connected="0" DataConsistency="1" Description="Port for simplifying routing I/O to FC components, using OPT-C6 CANopen option board." Routing=""></Port>
   </Ports>
 
   <Parameters>
@@ -27,8 +26,14 @@
 
   <Connectors>
 
-    <Connector Name="CANopenIOServer" Object="AntiBacklashApp.CANOpenPCIIOServer"></Connector>
+    <Connector Name="CANopenIOServer" Object=""></Connector>
     
   </Connectors>
+
+  <Signals>
+
+    <Signal Name="StatusAFE" Routing=""></Signal>
+    
+  </Signals>
 
 </Model>

@@ -1,0 +1,19 @@
+<Model Name="AntiBacklashLib.FCIOPort">
+  <BaseModel>VaconLib.FCIOPort</BaseModel>
+  <ModelTypeClass>XML</ModelTypeClass>
+
+  <Attributes>
+    <Attribute Name="Model" Value="AntiBacklashLib.FCIOPort"></Attribute>
+    <Attribute Name="ShaftAngle" SaveOnChange="0" Type="short" Value="0" Unit="deg"></Attribute>
+    <Attribute Name="ShaftRounds" SaveOnChange="0" Value="0" Type="short"></Attribute>
+  </Attributes>
+
+  <Connections>
+    <Connection Model="CDPPortConnection" Name="MapShaftAngle" Connected="0" Description="CDPPortConnection holds property values like Name, Input, LocalName, RemoteName (and Connected) for setting up the CDPPort connection." Input="1" LocalName=".ShaftAngle" RemoteName=".TPDO22.ShaftAngle"></Connection>
+    <Connection Model="CDPPortConnection" Name="MapShaftRounds" Connected="0" Description="CDPPortConnection holds property values like Name, Input, LocalName, RemoteName (and Connected) for setting up the CDPPort connection." Input="1" LocalName=".ShaftRounds" RemoteName=".TPDO21.ShaftRounds"></Connection>
+
+    <Connection Name="MapLastActiveFault" RemoteName="" LocalName=""></Connection>
+    
+  </Connections>
+
+</Model>

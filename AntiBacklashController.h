@@ -5,6 +5,7 @@
 #include <CDPAlarm/CDPAlarm.h>
 #include <CDPParameter/CDPParameter.h>
 #include <CDPSystem/Base/CDPComponent.h>
+#include <ShaftPort.h>
 #include <Signal/CDPSignal.h>
 #include <VaconLib/FCIOPort.h>
 #include <VaconLib/VaconMarineAppFCPort.h>
@@ -32,12 +33,15 @@ public:
     void ProcessSpeedCmdOffset();
     void ProcessDecelTorque();
     void ProcessConstTorque();
+    void ProcessSlaveDrooping();
     bool TransitionNullToSpeedCmdOffset();
     bool TransitionSpeedCmdOffsetToNull();
     bool TransitionNullToDecelTorque();
     bool TransitionDecelTorqueToNull();
     bool TransitionNullToConstTorque();
     bool TransitionConstTorqueToNull();
+    bool TransitionNullToSlaveDrooping();
+    bool TransitionSlaveDroopingToNull();
 
 protected:
     VaconLib::VaconMarineAppFCPort FC1;
@@ -45,6 +49,10 @@ protected:
     VaconLib::VaconMarineAppFCPort FC3;
     EncoderPort ENC1;
     SimCmdPort SimCmd;
+    ShaftPort S1;
+    ShaftPort S2;
+    ShaftPort S3;
+
     CDPParameter Offset;
     CDPParameter SlaveTorqueBase;
     CDPParameter SlaveTorqueGain;
@@ -86,7 +94,16 @@ protected:
 
     double encSpeedScaler(const EncoderPort& enc) { return double(enc.speed) / 9.549297; }
     double encoderRawToDeg_F5888(const EncoderPort& enc) { return double(enc.position) * (360.0 / 65535); }
-    double fcShaftRoundsAngleToDeg(const VaconLib::VaconMarineAppFCPort& fc) { return double(fc.ShaftRounds) * (360) + (double(fc.ShaftAngle)) * (180 / 3.14159265358979323846); } // Maybe ShaftAngle is in degrees already?
+    double fcShaftRoundsAngleToDeg(const ShaftPort& s) { return double(s.ShaftRounds) * (360) + double(s.ShaftAngle); }
+
+    double encStartAngle;
+    double FC1StartAngle;
+    double FC2StartAngle;
+    double FC3StartAngle;
+    double lastFC1Position;
+    double lastFC2Position;
+    double lastFC3Position;
+
 
     using CDPComponent::fs;
     using CDPComponent::requestedState;

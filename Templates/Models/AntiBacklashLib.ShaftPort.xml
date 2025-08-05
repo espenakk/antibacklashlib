@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Model Name="AntiBacklashLib.ShaftPort">
+ <ModelTypeClass>C++</ModelTypeClass>
+ <BaseModel>CDPPort</BaseModel>
+ <Attributes>
+  <Attribute Name="Description" Type="string" Value="Simple port example"></Attribute>
+  <Attribute Description="Implementation model used." Name="Model" ReadOnly="1" Required="1" SaveOnChange="0" Type="string" Value="AntiBacklashLib.ShaftPort"></Attribute>
+  <Attribute Description="" LogEventOnChange="0" Name="ShaftAngle" RouteMethod="RoutePeriodic" SaveOnChange="0" Type="short"></Attribute>
+  <Attribute LogEventOnChange="0" Name="ShaftRounds" RouteMethod="RouteEvent" SaveOnChange="0" Type="short"></Attribute>
+ </Attributes>
+ <Connections>
+  <Connection Input="1" LocalName=".ShaftAngle" Model="CDPPortConnection" Name="MapShaftAngle" RemoteName=".TPDO22.ShaftAngle"></Connection>
+  <Connection Input="1" LocalName=".ShaftRounds" Model="CDPPortConnection" Name="MapShaftRounds" RemoteName=".TPDO21.ShaftRounds"></Connection>
+ </Connections>
+</Model>
