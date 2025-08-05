@@ -311,6 +311,7 @@ bool AntiBacklashController::TransitionNullToDecelTorque()
         lastFC1Position = 0.0;
         lastFC2Position = 0.0;
         lastFC3Position = 0.0;
+        CDPMessage("Deceleration torque test started.\n");
         return true;
     }
     return false;
@@ -321,6 +322,7 @@ bool AntiBacklashController::TransitionDecelTorqueToNull()
     if(requestedState=="Null") {
         stopAllMotors(motorRoles);
         Running = false;
+        CDPMessage("Deceleration torque test finished.\n");
         return true;
     }
     return false;
@@ -340,6 +342,7 @@ bool AntiBacklashController::TransitionNullToConstTorque()
         lastFC1Position = 0.0;
         lastFC2Position = 0.0;
         lastFC3Position = 0.0;
+        CDPMessage("Constant torque test started.\n");
         return true;
     }
     return false;
@@ -350,6 +353,7 @@ bool AntiBacklashController::TransitionConstTorqueToNull()
     if(requestedState=="Null") {
         stopAllMotors(motorRoles);
         Running = false;
+        CDPMessage("Constant torque test finished.\n");
         return true;
     }
     return false;
@@ -369,6 +373,7 @@ bool AntiBacklashController::TransitionNullToSpeedCmdOffset()
         lastFC1Position = 0.0;
         lastFC2Position = 0.0;
         lastFC3Position = 0.0;
+        CDPMessage("Speed command test started.\n");
         return true;
     }
     return false;
@@ -379,6 +384,7 @@ bool AntiBacklashController::TransitionSpeedCmdOffsetToNull()
     if(requestedState=="Null") {
         stopAllMotors(motorRoles);
         Running = false;
+        CDPMessage("Speed command test finished.\n");
         return true;
     }
     return false;
@@ -398,18 +404,18 @@ bool AntiBacklashController::TransitionNullToSlaveDrooping()
         lastFC1Position = 0.0;
         lastFC2Position = 0.0;
         lastFC3Position = 0.0;
+        CDPMessage("Slave drooping test started.\n");
         return true;
     }
     return false;
 }
-
-
 
 bool AntiBacklashController::TransitionSlaveDroopingToNull()
 {
     if(requestedState=="Null") {
         stopAllMotors(motorRoles);
         Running = false;
+        CDPMessage("Slave drooping test finished.\n");
         return true;
     }
     return false;
@@ -451,7 +457,7 @@ MotorRoles AntiBacklashController::chooseMasterSlave(double error) {
 
 double AntiBacklashController::adaptiveSlaveTorque(double& speedCmd) {
     double dynamicTorque = speedCmd * (1 / SlaveTorqueGain);
-    return SlaveTorqueBase - dynamicTorque;
+    return SlaveTorqueBase + dynamicTorque;
 }
 
 void AntiBacklashController::setMasterSlaveTorque(MotorRoles& roles, double masterTorque, double slaveTorque) {

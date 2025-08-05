@@ -3,6 +3,7 @@
   <Model Name="AntiBacklashLib.AntiBacklashController"/>
   <Model Name="AntiBacklashLib.EncoderPort"/>
   <Model Name="AntiBacklashLib.FCIOPort"/>
+  <Model Name="AntiBacklashLib.FullTest"/>
   <Model Name="AntiBacklashLib.ShaftPort"/>
   <Model Name="AntiBacklashLib.SimCmdPort"/>
   <Model Name="AntiBacklashLib.SpeedCmdSim"/>

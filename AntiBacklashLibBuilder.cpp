@@ -7,6 +7,7 @@ AntiBacklashLibBuilder implementation.
 #include "SpeedCmdSim.h"
 #include "SimCmdPort.h"
 #include "ShaftPort.h"
+#include "FullTest.h"
 #include "AntiBacklashLibBuilder.h"
 
 using namespace AntiBacklashLib;
@@ -41,6 +42,9 @@ CDPComponent* AntiBacklashLibBuilder::CreateNewComponent(const std::string& type
     
     if (type=="AntiBacklashLib.SpeedCmdSim")
         return new SpeedCmdSim;
+    
+    if (type=="AntiBacklashLib.FullTest")
+        return new FullTest;
     
     return CDPBuilder::CreateNewComponent(type);
 }

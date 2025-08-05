@@ -104,7 +104,6 @@ protected:
     double lastFC2Position;
     double lastFC3Position;
 
-
     using CDPComponent::fs;
     using CDPComponent::requestedState;
     using CDPComponent::ts;

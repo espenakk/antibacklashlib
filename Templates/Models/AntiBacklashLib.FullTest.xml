@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Model Name="AntiBacklashLib.FullTest">
+ <ModelTypeClass>C++</ModelTypeClass>
+ <BaseModel>CDPComponent</BaseModel>
+ <Element Name="Priority" Value="normal"/>
+ <Element Name="fs" Value="100"/>
+ <Attributes>
+  <Attribute Name="Description" Type="string" Value="Automatic full test with different parameters"/>
+  <Attribute Description="Implementation model used." Name="Model" ReadOnly="1" Required="1" SaveOnChange="0" Type="string" Value="AntiBacklashLib.FullTest"/>
+ </Attributes>
+ <Signals>
+  <Signal Input="0" Model="CDPSignal&lt;int&gt;" Name="AntiBacklashMode" Type="int"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="LoadTorqueLimit" Type="double" Unit="Nm" Value="4"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="MaxTorque" Type="double" Unit="Nm" Value="5"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="SlaveTorqueBase" Type="double" Unit="Nm" Value="3"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="SlaveTorqueGain" Type="double" Unit="Nm" Value="5"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="Offset" Type="double" Unit="%" Value="1"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="SlaveDroop" Type="double" Unit="%" Value="0"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="MasterDroop" Type="double" Unit="%" Value="0"/>
+  <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="Start" Type="bool"/>
+  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="MaxSpeed" Type="double" Unit="rad/s" Value="1.25"/>
+  <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="Enable" Type="bool" Value="0"/>
+  <Signal Description="" Input="1" Model="CDPSignal&lt;bool&gt;" Name="IsRunning" Type="bool" Unit="" Value=""/>
+ </Signals>
+ <States>
+  <State Name="Running"/>
+ </States>
+ <StateTransitions>
+  <StateTransition FromState="Null" Name="NullToRunning" ToState="Running"/>
+  <StateTransition FromState="Running" Name="RunningToNull" ToState="Null"/>
+ </StateTransitions>
+ <Parameters>
+  <Parameter Name="NumTests" Value="4"/>
+ </Parameters>
+</Model>
