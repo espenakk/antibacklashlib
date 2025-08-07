@@ -10,7 +10,6 @@
  <Signals>
   <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="SpeedRef" Type="double" Unit="rad/s" Value="0.0"/>
   <Signal Description="" Input="0" Model="CDPSignal&lt;double&gt;" Name="ENC1Speed" Type="double" Unit="rad/s" Value="0.0"/>
-  <Signal Description="" Input="0" Model="CDPSignal&lt;int&gt;" Name="AntiBacklashMode" Type="int" Unit="" Value="0"/>
   <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC1Speed" Type="double" Unit="rad/s" Value="0.0"/>
   <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC2Speed" Type="double" Unit="rad/s" Value="0.0"/>
   <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="FC1Torque" Type="double" Unit="Nm" Value="0.0"/>
@@ -23,15 +22,7 @@
   <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="Running" Type="bool"/>
   <Signal Input="0" Model="CDPSignal&lt;int&gt;" Name="TestIndex" Type="int"/>
  </Signals>
- <Parameters>
-  <Parameter Description="" Name="LoadTorqueLimit" Unit="Nm" Value="4.0"/>
-  <Parameter Description="" Name="MaxTorque" Unit="Nm" Value="3.0"/>
-  <Parameter Description="" Name="SlaveTorqueBase" Unit="Nm" Value="0"/>
-  <Parameter Description="" Name="SlaveTorqueGain" Unit="" Value="1"/>
-  <Parameter Description="" Name="Offset" Unit="%" Value="1"/>
-  <Parameter Description="" Name="SlaveDroop" Unit="%" Value="1"/>
-  <Parameter Description="" Name="MasterDroop" Unit="%" Value="0"/>
- </Parameters>
+ <Parameters/>
  <Ports>
   <Port Input="0" Model="VaconLib.VaconMarineAppFCPort" Name="FC1">
    <Connections>
@@ -93,16 +84,20 @@
   <Port Model="AntiBacklashLib.ShaftPort" Name="S1"/>
   <Port Model="AntiBacklashLib.ShaftPort" Name="S2"/>
   <Port Model="AntiBacklashLib.ShaftPort" Name="S3"/>
+  <Port Model="AntiBacklashLib.ABParamPort" Name="ABParams"/>
  </Ports>
  <States>
   <State Description="" Name="SpeedCmdOffset"/>
-  <State Description="" Name="DecelTorque"/>
+  <State Description="" Name="AdaptiveTorque"/>
   <State Name="ConstTorque"/>
   <State Name="SlaveDrooping"/>
+  <State Name="ActualPositionOffset"/>
+  <State Name="SlaveSpeedRefDelay"/>
+  <State Name="ConstrainedSlaveAcceleration"/>
  </States>
  <StateTransitions>
-  <StateTransition Description="" FromState="Null" Name="NullToSpeedCmdOffset" ToState="SpeedCmdOffset"/>
-  <StateTransition Description="" FromState="SpeedCmdOffset" Name="SpeedCmdOffsetToNull" ToState="Null"/>
+  <StateTransition Description="" FromState="Null" Name="NullToAdaptiveTorque" ToState="AdaptiveTorque"/>
+  <StateTransition Description="" FromState="AdaptiveTorque" Name="AdaptiveTorqueToNull" ToState="Null"/>
   <StateTransition FromState="Null" Name="NullToRunning" ToState="Running"/>
   <StateTransition FromState="Running" Name="RunningToNull" ToState="Null"/>
   <StateTransition FromState="Null" Name="NullToSpeedTimerTest" ToState="SpeedTimerTest"/>
@@ -111,6 +106,12 @@
   <StateTransition FromState="ConstTorque" Name="ConstTorqueToNull" ToState="Null"/>
   <StateTransition FromState="Null" Name="NullToSlaveDrooping" ToState="SlaveDrooping"/>
   <StateTransition FromState="SlaveDrooping" Name="SlaveDroopingToNull" ToState="Null"/>
+  <StateTransition FromState="Null" Name="NullToActualPositionOffset" ToState="ActualPositionOffset"/>
+  <StateTransition FromState="ActualPositionOffset" Name="ActualPositionOffsetToNull" ToState="Null"/>
+  <StateTransition FromState="Null" Name="NullToSlaveSpeedRefDelay" ToState="SlaveSpeedRefDelay"/>
+  <StateTransition FromState="SlaveSpeedRefDelay" Name="SlaveSpeedRefDelayToNull" ToState="Null"/>
+  <StateTransition FromState="Null" Name="NullToConstrainedSlaveAcceleration" ToState="ConstrainedSlaveAcceleration"/>
+  <StateTransition FromState="ConstrainedSlaveAcceleration" Name="ConstrainedSlaveAccelerationToNull" ToState="Null"/>
  </StateTransitions>
  <Element Description="The Frequency [Hz] that the component statemachine is run at." DisplayHint="Important" Model="PropertyAsElement" Name="fs" Required="1" Type="double" Unit="Hz" Value="100"/>
 </Model>

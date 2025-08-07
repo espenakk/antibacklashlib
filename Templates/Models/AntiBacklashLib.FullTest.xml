@@ -9,18 +9,12 @@
   <Attribute Description="Implementation model used." Name="Model" ReadOnly="1" Required="1" SaveOnChange="0" Type="string" Value="AntiBacklashLib.FullTest"/>
  </Attributes>
  <Signals>
-  <Signal Input="0" Model="CDPSignal&lt;int&gt;" Name="AntiBacklashMode" Type="int"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="LoadTorqueLimit" Type="double" Unit="Nm" Value="4"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="MaxTorque" Type="double" Unit="Nm" Value="5"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="SlaveTorqueBase" Type="double" Unit="Nm" Value="3"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="SlaveTorqueGain" Type="double" Unit="Nm" Value="5"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="Offset" Type="double" Unit="%" Value="1"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="SlaveDroop" Type="double" Unit="%" Value="0"/>
-  <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="MasterDroop" Type="double" Unit="%" Value="0"/>
   <Signal Input="0" Model="CDPSignal&lt;bool&gt;" Name="Start" Type="bool"/>
   <Signal Input="0" Model="CDPSignal&lt;double&gt;" Name="MaxSpeed" Type="double" Unit="rad/s" Value="1.25"/>
   <Signal Input="1" Model="CDPSignal&lt;bool&gt;" Name="Enable" Type="bool" Value="0"/>
   <Signal Description="" Input="1" Model="CDPSignal&lt;bool&gt;" Name="IsRunning" Type="bool" Unit="" Value=""/>
+  <Signal Description="" Input="0" Model="CDPSignal&lt;int&gt;" Name="CurrentStatus" Type="int" Unit="" Value="0"/>
+  <Signal Input="0" Model="CDPSignal&lt;int&gt;" Name="TotalTests" Type="int" Value="0"/>
  </Signals>
  <States>
   <State Name="Running"/>
@@ -30,6 +24,27 @@
   <StateTransition FromState="Running" Name="RunningToNull" ToState="Null"/>
  </StateTransitions>
  <Parameters>
-  <Parameter Name="NumTests" Value="4"/>
+  <Parameter Name="NumTests" Value="9"/>
+  <Parameter Name="GainMin" Value="1"/>
+  <Parameter Name="GainMax" Value="9"/>
+  <Parameter Name="BaseMin" Unit="Nm" Value="0.5"/>
+  <Parameter Name="BaseMax" Unit="Nm" Value="4.5"/>
+  <Parameter Name="OffsetMin" Unit="%" Value="0.25"/>
+  <Parameter Name="OffsetMax" Unit="%" Value="2.25"/>
+  <Parameter Name="DroopMin" Unit="%" Value="0.25"/>
+  <Parameter Name="DroopMax" Unit="%" Value="2.25"/>
+  <Parameter Name="AntiBacklashMode" Value="0"/>
+  <Parameter Name="LoadTorqueLimit" Unit="Nm" Value="4.0"/>
+  <Parameter Name="MaxTorque" Unit="Nm" Value="5"/>
+  <Parameter Name="SlaveTorqueBase" Unit="Nm" Value="3"/>
+  <Parameter Name="SlaveTorqueGain" Unit="Nm" Value="6"/>
+  <Parameter Name="Offset" Unit="%" Value="1"/>
+  <Parameter Name="SlaveDroop" Unit="%" Value="0"/>
+  <Parameter Name="MasterDroop" Unit="%" Value="0"/>
+  <Parameter Name="m_Start"/>
+  <Parameter Name="m_MaxSpeed" Unit="rad/s" Value="1.25"/>
  </Parameters>
+ <Ports>
+  <Port Model="AntiBacklashLib.ABParamPort" Name="ABParams"/>
+ </Ports>
 </Model>

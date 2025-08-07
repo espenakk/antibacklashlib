@@ -5,6 +5,7 @@ PROJECTNAME = AntiBacklashLib
 DEPS += \
 
 HEADERS += \
+    ABParamPort.h \
     AntiBacklashController.h \
     EncoderPort.h \
     FullTest.h \
@@ -15,6 +16,7 @@ HEADERS += \
     AntiBacklashLibBuilder.h
 
 SOURCES += \
+    ABParamPort.cpp \
     AntiBacklashController.cpp \
     AntiBacklashLibBuilder.cpp \
     EncoderPort.cpp \
@@ -24,6 +26,7 @@ SOURCES += \
     SpeedCmdSim.cpp
 
 DISTFILES += $$files(*.xml, true) \
+    Templates/Models/AntiBacklashLib.ABParamPort.xml \
     Templates/Models/AntiBacklashLib.AntiBacklashController.xml \
     Templates/Models/AntiBacklashLib.EncoderPort.xml \
     Templates/Models/AntiBacklashLib.FCIOPort.xml \

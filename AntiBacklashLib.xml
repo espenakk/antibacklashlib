@@ -1,5 +1,6 @@
 <Library Name="AntiBacklashLib">
  <Models>
+  <Model Name="AntiBacklashLib.ABParamPort"/>
   <Model Name="AntiBacklashLib.AntiBacklashController"/>
   <Model Name="AntiBacklashLib.EncoderPort"/>
   <Model Name="AntiBacklashLib.FCIOPort"/>

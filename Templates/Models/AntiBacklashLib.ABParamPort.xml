@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Model Name="AntiBacklashLib.ABParamPort">
+ <ModelTypeClass>C++</ModelTypeClass>
+ <BaseModel>CDPPort</BaseModel>
+ <Attributes>
+  <Attribute Name="Description" Type="string" Value="Simple port example"/>
+  <Attribute Description="Implementation model used." Name="Model" ReadOnly="1" Required="1" SaveOnChange="0" Type="string" Value="AntiBacklashLib.ABParamPort"/>
+  <Attribute Description="" LogEventOnChange="0" Name="AntiBacklashMode" RouteMethod="RoutePeriodic" SaveOnChange="0" Type="int"/>
+  <Attribute LogEventOnChange="0" Name="LoadTorqueLimit" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
+  <Attribute LogEventOnChange="0" Name="MaxTorque" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
+  <Attribute LogEventOnChange="0" Name="SlaveTorqueBase" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
+  <Attribute LogEventOnChange="0" Name="SlaveTorqueGain" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
+  <Attribute LogEventOnChange="0" Name="Offset" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
+  <Attribute LogEventOnChange="0" Name="SlaveDroop" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
+  <Attribute LogEventOnChange="0" Name="MasterDroop" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
+ </Attributes>
+ <Connections>
+  <Connection Input="1" LocalName=".AntiBacklashMode" Model="CDPPortConnection" Name="MapAntiBacklashMode"/>
+  <Connection Input="1" LocalName=".LoadTorqueLimit" Model="CDPPortConnection" Name="MapLoadTorqueLimit"/>
+  <Connection Input="1" LocalName=".MaxTorque" Model="CDPPortConnection" Name="MapMaxTorque"/>
+  <Connection Input="1" LocalName=".SlaveTorqueBase" Model="CDPPortConnection" Name="MapSlaveTorqueBase"/>
+  <Connection Input="1" LocalName=".SlaveTorqueGain" Model="CDPPortConnection" Name="MapSlaveTorqueGain"/>
+  <Connection Input="1" LocalName=".Offset" Model="CDPPortConnection" Name="MapOffset"/>
+  <Connection Input="1" LocalName=".SlaveDroop" Model="CDPPortConnection" Name="MapSlaveDroop"/>
+  <Connection Input="1" LocalName=".MasterDroop" Model="CDPPortConnection" Name="MapMasterDroop"/>
+ </Connections>
+</Model>

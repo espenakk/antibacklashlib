@@ -2,6 +2,7 @@
 #define ANTIBACKLASHLIB_ANTIBACKLASHCONTROLLER_H
 
 #include <SimCmdPort.h>
+#include <ABParamPort.h>
 #include <CDPAlarm/CDPAlarm.h>
 #include <CDPParameter/CDPParameter.h>
 #include <CDPSystem/Base/CDPComponent.h>
@@ -11,13 +12,9 @@
 #include <VaconLib/VaconMarineAppFCPort.h>
 #include <EncoderPort.h>
 
-namespace AntiBacklashLib {
+#include <deque>
 
-struct MotorRoles {
-    VaconLib::VaconMarineAppFCPort* master;
-    VaconLib::VaconMarineAppFCPort* slave;
-    VaconLib::VaconMarineAppFCPort* load;
-};
+namespace AntiBacklashLib {
 
 class AntiBacklashController : public CDPComponent
 {
@@ -31,17 +28,26 @@ public:
 
     void ProcessNull() override;
     void ProcessSpeedCmdOffset();
-    void ProcessDecelTorque();
+    void ProcessAdaptiveTorque();
     void ProcessConstTorque();
     void ProcessSlaveDrooping();
+    void ProcessActualPositionOffset();
+    void ProcessSlaveSpeedRefDelay();
+    void ProcessConstrainedSlaveAcceleration();
     bool TransitionNullToSpeedCmdOffset();
     bool TransitionSpeedCmdOffsetToNull();
-    bool TransitionNullToDecelTorque();
-    bool TransitionDecelTorqueToNull();
+    bool TransitionNullToAdaptiveTorque();
+    bool TransitionAdaptiveTorqueToNull();
     bool TransitionNullToConstTorque();
     bool TransitionConstTorqueToNull();
     bool TransitionNullToSlaveDrooping();
     bool TransitionSlaveDroopingToNull();
+    bool TransitionNullToActualPositionOffset();
+    bool TransitionActualPositionOffsetToNull();
+    bool TransitionNullToSlaveSpeedRefDelay();
+    bool TransitionSlaveSpeedRefDelayToNull();
+    bool TransitionNullToConstrainedSlaveAcceleration();
+    bool TransitionConstrainedSlaveAccelerationToNull();
 
 protected:
     VaconLib::VaconMarineAppFCPort FC1;
@@ -52,16 +58,8 @@ protected:
     ShaftPort S1;
     ShaftPort S2;
     ShaftPort S3;
+    ABParamPort ABParams;
 
-    CDPParameter Offset;
-    CDPParameter SlaveTorqueBase;
-    CDPParameter SlaveTorqueGain;
-    CDPParameter LoadTorqueLimit;
-    CDPParameter MaxTorque;
-    CDPParameter SlaveDroop;
-    CDPParameter MasterDroop;
-
-    
     CDPSignal<double> SpeedRef;
     CDPSignal<double> ENC1Speed;
     CDPSignal<double> FC1Speed;
@@ -75,14 +73,17 @@ protected:
     CDPSignal<double> FC3Position;
     CDPSignal<bool> Running;
     CDPSignal<int> TestIndex;
-    CDPSignal<int> AntiBacklashMode;
 
-    double previousSpeedRef;
+    struct MotorRoles {
+        VaconLib::VaconMarineAppFCPort* master;
+        VaconLib::VaconMarineAppFCPort* slave;
+        VaconLib::VaconMarineAppFCPort* load;
+    };
+
     MotorRoles motorRoles;
 
-    MotorRoles chooseMasterSlave(double error);
+    void chooseMasterSlave(MotorRoles& roles, double speedCmd);
     void scalePlotSignals(MotorRoles& roles);
-    void initFCs(MotorRoles& roles);
     void setMasterSlaveTorque(MotorRoles& roles, double masterTorque, double slaveTorque);
     void setMasterSlaveSpeed(MotorRoles& roles, double masterSpeed, double slaveSpeed);
     void setMasterSlaveDroop(MotorRoles& roles, double masterDroop, double slaveDroop);
@@ -90,8 +91,10 @@ protected:
     void enableMasterSlave(MotorRoles& roles, bool enable);
     void stopAllMotors(MotorRoles& roles);
 
-    double adaptiveSlaveTorque(double& speedCmd);
+    bool startTestTransition(const std::string& targetState);
+    bool stopTestTransition(const std::string& targetState);
 
+    double adaptiveSlaveTorque(double& speedCmd);
     double encSpeedScaler(const EncoderPort& enc) { return double(enc.speed) / 9.549297; }
     double encoderRawToDeg_F5888(const EncoderPort& enc) { return double(enc.position) * (360.0 / 65535); }
     double fcShaftRoundsAngleToDeg(const ShaftPort& s) { return double(s.ShaftRounds) * (360) + double(s.ShaftAngle); }
@@ -103,6 +106,10 @@ protected:
     double lastFC1Position;
     double lastFC2Position;
     double lastFC3Position;
+
+    static double constexpr slaveDelay{0.150};
+    std::deque<double> speedHistory;
+
 
     using CDPComponent::fs;
     using CDPComponent::requestedState;

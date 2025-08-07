@@ -1,6 +1,7 @@
 #ifndef ANTIBACKLASHLIB_FULLTEST_H
 #define ANTIBACKLASHLIB_FULLTEST_H
 
+#include <ABParamPort.h>
 #include <CDPAlarm/CDPAlarm.h>
 #include <CDPParameter/CDPParameter.h>
 #include <CDPSystem/Base/CDPComponent.h>
@@ -23,19 +24,34 @@ public:
     bool TransitionRunningToNull();
 
 protected:
+    ABParamPort ABParams;
     CDPParameter NumTests;
-    CDPSignal<int> AntiBacklashMode;
-    CDPSignal<double> LoadTorqueLimit;
-    CDPSignal<double> MaxTorque;
-    CDPSignal<double> SlaveTorqueBase;
-    CDPSignal<double> SlaveTorqueGain;
-    CDPSignal<double> Offset;
-    CDPSignal<double> SlaveDroop;
-    CDPSignal<double> MasterDroop;
+    CDPParameter GainMin;
+    CDPParameter GainMax;
+    CDPParameter BaseMin;
+    CDPParameter BaseMax;
+    CDPParameter OffsetMin;
+    CDPParameter OffsetMax;
+    CDPParameter DroopMin;
+    CDPParameter DroopMax;
+
+    CDPParameter AntiBacklashMode;
+    CDPParameter LoadTorqueLimit;
+    CDPParameter MaxTorque;
+    CDPParameter SlaveTorqueBase;
+    CDPParameter SlaveTorqueGain;
+    CDPParameter Offset;
+    CDPParameter SlaveDroop;
+    CDPParameter MasterDroop;
+    CDPParameter m_Start;
+    CDPParameter m_MaxSpeed;
+
     CDPSignal<bool> Start;
     CDPSignal<double> MaxSpeed;
     CDPSignal<bool> Enable;
     CDPSignal<bool> IsRunning;
+    CDPSignal<int> CurrentStatus;
+    CDPSignal<int> TotalTests;
     using CDPComponent::fs;
     using CDPComponent::requestedState;
     using CDPComponent::ts;

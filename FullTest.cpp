@@ -36,7 +36,16 @@ FullTest::~FullTest()
 void FullTest::Create(const char* fullName)
 {
     CDPComponent::Create(fullName);
+    ABParams.Create("ABParams",this);
     NumTests.Create("NumTests",this);
+    GainMin.Create("GainMin",this);
+    GainMax.Create("GainMax",this);
+    BaseMin.Create("BaseMin",this);
+    BaseMax.Create("BaseMax",this);
+    OffsetMin.Create("OffsetMin",this);
+    OffsetMax.Create("OffsetMax",this);
+    DroopMin.Create("DroopMin",this);
+    DroopMax.Create("DroopMax",this);
     AntiBacklashMode.Create("AntiBacklashMode",this);
     LoadTorqueLimit.Create("LoadTorqueLimit",this);
     MaxTorque.Create("MaxTorque",this);
@@ -45,10 +54,14 @@ void FullTest::Create(const char* fullName)
     Offset.Create("Offset",this);
     SlaveDroop.Create("SlaveDroop",this);
     MasterDroop.Create("MasterDroop",this);
+    m_Start.Create("m_Start",this);
+    m_MaxSpeed.Create("m_MaxSpeed",this);
     Start.Create("Start",this);
     MaxSpeed.Create("MaxSpeed",this);
     Enable.Create("Enable",this);
     IsRunning.Create("IsRunning",this);
+    CurrentStatus.Create("CurrentStatus",this);
+    TotalTests.Create("TotalTests",this);
 }
 
 /*!
@@ -96,6 +109,17 @@ void FullTest::ProcessNull()
     if (Enable) {
         requestedState = "Running";
     }
+
+    ABParams.AntiBacklashMode = AntiBacklashMode;
+    ABParams.LoadTorqueLimit = LoadTorqueLimit;
+    ABParams.MaxTorque = MaxTorque;
+    ABParams.SlaveTorqueBase = SlaveTorqueBase;
+    ABParams.SlaveTorqueGain = SlaveTorqueGain;
+    ABParams.Offset = Offset;
+    ABParams.SlaveDroop = SlaveDroop;
+    ABParams.MasterDroop = MasterDroop;
+    Start = m_Start;
+    MaxSpeed = m_MaxSpeed;
 }
 
 void FullTest::ProcessRunning()
@@ -104,115 +128,112 @@ void FullTest::ProcessRunning()
         requestedState = "Null";
         return;
     }
-
-    // --- Test Configuration ---
-    // Define the parameter ranges for each mode.
-    const double GAIN_MIN = 1,  GAIN_MAX = 5;
-    const double BASE_MIN = 2.5,  BASE_MAX = 4.5;
-    const double OFFSET_MIN = 0.5, OFFSET_MAX = 2.5;
-    const double DROOP_MIN = 1.0,  DROOP_MAX = 10.0;
+    TotalTests = NumTests * 4;
+    CurrentStatus = currentParamStep + (currentMode * int(NumTests));
 
     // The main sequencer logic is a state machine within the "Running" state.
-    switch (sequence)
-    {
-    case 0: // State 0: Setup the test
-    {
-        // Check if all modes are complete
-        if (currentMode >= 4) {
+    switch (sequence) {
+    case 0: {
+        // if (currentMode >= 4) {
+        //     CDPMessage("Full test sequence completed successfully.\n");
+        //     requestedState = "Null"; // All done, go back to Null
+        //     return;
+        // }
+        if (currentMode >= 6) {
             CDPMessage("Full test sequence completed successfully.\n");
             requestedState = "Null"; // All done, go back to Null
             return;
         }
 
-        // If NumTestsPerMode is 0 or less, skip this mode.
         if (NumTests < 1) {
             CDPMessage("Skipping Mode %d (NumTestsPerMode is %d).\n", currentMode, int(NumTests));
             currentMode++;
-            currentParamStep = 0; // Reset for next mode
-            sequence = 0;         // Stay in setup state for the next mode
+            currentParamStep = 0;
+            sequence = 0;
             return;
         }
 
         CDPMessage("Setting up test for Mode: %d, Param Step: %d of %d\n", currentMode, currentParamStep + 1, int(NumTests));
 
-        AntiBacklashMode = currentMode; // Modes 0, 1, 2, 3
+        ABParams.AntiBacklashMode = currentMode;
+        double range;
+        double value;
 
-        // Calculate the parameter value for the current step symmetrically within its range.
         switch (currentMode) {
-        case 0: // DecelTorque Mode Test -> Vary SlaveTorqueGain
-        {
-            double range = GAIN_MAX - GAIN_MIN;
-            // If only one test, use the midpoint. Otherwise, distribute evenly.
-            double value = (NumTests == 1) ? (GAIN_MIN + range / 2.0) : (GAIN_MIN + currentParamStep * (range / (NumTests - 1)));
-            SlaveTorqueGain = value;
+        // case 0: // AdaptiveTorque Mode Test
+        //     range = GainMax - GainMin;
+        //     value = (NumTests == 1) ? (GainMin + range / 2.0) : (GainMin + currentParamStep * (range / (NumTests - 1)));
+        //     ABParams.Offset = 0;
+        //     ABParams.SlaveTorqueGain = value;
+        //     ABParams.SlaveTorqueBase = value / 2;
+        //     break;
+        // case 1: // ConstTorque Mode Test
+        //     range = BaseMax - BaseMin;
+        //     value = (NumTests == 1) ? (BaseMin + range / 2.0) : (BaseMin + currentParamStep * (range / (NumTests - 1)));
+        //     ABParams.Offset = 0;
+        //     ABParams.SlaveTorqueGain = 0;
+        //     ABParams.SlaveTorqueBase = value;
+        //     break;
+        // case 2: // SpeedCmdOffset Mode Test
+        //     range = OffsetMax - OffsetMin;
+        //     value = (NumTests == 1) ? (OffsetMin + range / 2.0) : (OffsetMin + currentParamStep * (range / (NumTests - 1)));
+        //     ABParams.Offset = value;
+        //     ABParams.SlaveTorqueGain = 0;
+        //     ABParams.SlaveTorqueBase = MaxTorque;
+        //     break;
+        // case 3: // SlaveDrooping Mode Test
+        //     range = DroopMax - DroopMin;
+        //     value = (NumTests == 1) ? (DroopMin + range / 2.0) : (DroopMin + currentParamStep * (range / (NumTests - 1)));
+        //     ABParams.Offset = 0;
+        //     ABParams.SlaveTorqueGain = 0;
+        //     ABParams.SlaveTorqueBase = MaxTorque;
+        //     SlaveDroop = value;
+        //     break;
+        case 4: // ActualPositionOffset Mode Test
+            // No params to set
             break;
-        }
-        case 1: // ConstTorque Mode Test -> Vary SlaveTorqueBase
-        {
-            double range = BASE_MAX - BASE_MIN;
-            double value = (NumTests == 1) ? (BASE_MIN + range / 2.0) : (BASE_MIN + currentParamStep * (range / (NumTests - 1)));
-            SlaveTorqueBase = value;
+        case 5: // SlaveSpeedRefDelay Mode Test
+            // No params to set
             break;
-        }
-        case 2: // SpeedCmdOffset Mode Test -> Vary Offset
-        {
-            double range = OFFSET_MAX - OFFSET_MIN;
-            double value = (NumTests == 1) ? (OFFSET_MIN + range / 2.0) : (OFFSET_MIN + currentParamStep * (range / (NumTests - 1)));
-            Offset = value;
-            break;
-        }
-        case 3: // SlaveDrooping Mode Test -> Vary SlaveDroop
-        {
-            double range = DROOP_MAX - DROOP_MIN;
-            double value = (NumTests == 1) ? (DROOP_MIN + range / 2.0) : (DROOP_MIN + currentParamStep * (range / (NumTests - 1)));
-            SlaveDroop = value;
-            break;
-        }
+        // --- Not yet implemented ---
+        // case 6: // ConstrainedSlaceAcceleration Mode Test
+        //     break;
         default:
-        {
             Enable = false;
             break;
         }
-        }
 
-        // Trigger the SpeedCmdSim to start its motion profile
         Start = true;
-
-        // Transition to the next state to wait for completion
         sequence = 1;
         break;
     }
 
-    case 1: // State 1: Wait for the test to finish
-    {
-        // First, de-assert the start trigger.
-        Start = false;
+    case 1: // To ensure it actually started.
+        if (IsRunning) {
+            Start = false;
+            sequence = 2;
+        }
+        break;
 
-        // Wait until the SpeedCmdSim component reports it is no longer running.
+    case 2:
         if (!IsRunning) {
             CDPMessage("Motion profile finished. Advancing to next test.\n");
 
-            // The motion is done, so advance the parameter step.
             currentParamStep++;
 
-            // If all parameter steps for this mode are done, move to the next mode.
             if (currentParamStep >= NumTests) {
                 currentParamStep = 0;
                 currentMode++;
             }
-
-            // Go back to the setup state for the next test run.
             sequence = 0;
         }
         break;
     }
-    }
 }
-
 bool FullTest::TransitionNullToRunning()
 {
     if (requestedState == "Running") {
-        currentMode = 0;
+        currentMode = 4;
         currentParamStep = 0;
         sequence = 0;
         CDPMessage("FullTest entering Running state.\n");
@@ -225,7 +246,13 @@ bool FullTest::TransitionRunningToNull()
 {
     if (requestedState == "Null") {
         Start = false;
-        AntiBacklashMode = -1;
+        ABParams.AntiBacklashMode = -1;
+        ABParams.MasterDroop = 0;
+        ABParams.SlaveDroop = 0;
+        ABParams.SlaveTorqueBase = 3;
+        ABParams.SlaveTorqueGain = 5;
+        ABParams.Offset = 1;
+        Enable = false;
         CDPMessage("FullTest returning to Null state.\n");
         return true;
     }

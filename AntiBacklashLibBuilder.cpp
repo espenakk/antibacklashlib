@@ -8,6 +8,7 @@ AntiBacklashLibBuilder implementation.
 #include "SimCmdPort.h"
 #include "ShaftPort.h"
 #include "FullTest.h"
+#include "ABParamPort.h"
 #include "AntiBacklashLibBuilder.h"
 
 using namespace AntiBacklashLib;
@@ -77,6 +78,9 @@ CDPObject* AntiBacklashLibBuilder::CreateNewObject(const std::string& type)
     
     if (type=="AntiBacklashLib.ShaftPort")
         return new ShaftPort;
+    
+    if (type=="AntiBacklashLib.ABParamPort")
+        return new ABParamPort;
     
     return CDPBuilder::CreateNewObject(type);
 }
