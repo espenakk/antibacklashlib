@@ -54,7 +54,7 @@ protected:
 
     // --- Test Configuration ---
     static double constexpr GAIN_MIN{1},  GAIN_MAX{5};
-    static double constexpr BASE_MIN{0.5},  BASE_MAX{2.5};
+    static double constexpr BASE_MIN{0.5},  BASE_MAX{2.0};
     static double constexpr OFFSET_MIN{0.25}, OFFSET_MAX{2.5};
     static double constexpr DROOP_MIN{1.0},  DROOP_MAX{10.0};
     static double constexpr DEGREE_MIN{230},  DEGREE_MAX{230};

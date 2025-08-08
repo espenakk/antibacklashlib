@@ -218,19 +218,19 @@ void FullTest::ProcessRunning()
             ABParams.SlaveTorqueBase = value;
             ABParams.Offset = 0;
             ABParams.SlaveTorqueGain = 0;
-            ABParams.LoadTorqueLimit = 0.5;
+            ABParams.LoadTorqueLimit = 2;
             break;
         default:
             Enable = false;
             break;
         }
         ABParams.AntiBacklashMode = currentMode;
-        Start = true;
         sequence = 1;
         break;
     }
 
     case 1: // To ensure it actually started.
+        Start = true;
         if (IsRunning) {
             Start = false;
             sequence = 2;
