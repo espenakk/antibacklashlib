@@ -19,6 +19,9 @@ public:
     CDPProperty<double> Offset;
     CDPProperty<double> SlaveDroop;
     CDPProperty<double> MasterDroop;
+    CDPProperty<double> SlaveDelay;
+    CDPProperty<double> DegreeOffset;
+    CDPProperty<double> DegreeGain;
 };
 
 } // namespace AntiBacklashLib

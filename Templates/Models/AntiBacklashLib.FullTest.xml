@@ -25,14 +25,6 @@
  </StateTransitions>
  <Parameters>
   <Parameter Name="NumTests" Value="9"/>
-  <Parameter Name="GainMin" Value="1"/>
-  <Parameter Name="GainMax" Value="9"/>
-  <Parameter Name="BaseMin" Unit="Nm" Value="0.5"/>
-  <Parameter Name="BaseMax" Unit="Nm" Value="4.5"/>
-  <Parameter Name="OffsetMin" Unit="%" Value="0.25"/>
-  <Parameter Name="OffsetMax" Unit="%" Value="2.25"/>
-  <Parameter Name="DroopMin" Unit="%" Value="0.25"/>
-  <Parameter Name="DroopMax" Unit="%" Value="2.25"/>
   <Parameter Name="AntiBacklashMode" Value="0"/>
   <Parameter Name="LoadTorqueLimit" Unit="Nm" Value="4.0"/>
   <Parameter Name="MaxTorque" Unit="Nm" Value="5"/>

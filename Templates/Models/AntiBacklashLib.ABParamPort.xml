@@ -13,6 +13,9 @@
   <Attribute LogEventOnChange="0" Name="Offset" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
   <Attribute LogEventOnChange="0" Name="SlaveDroop" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
   <Attribute LogEventOnChange="0" Name="MasterDroop" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
+  <Attribute LogEventOnChange="0" Name="SlaveDelay" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
+  <Attribute LogEventOnChange="0" Name="DegreeOffset" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
+  <Attribute LogEventOnChange="0" Name="DegreeGain" RouteMethod="RouteEvent" SaveOnChange="0" Type="double"/>
  </Attributes>
  <Connections>
   <Connection Input="1" LocalName=".AntiBacklashMode" Model="CDPPortConnection" Name="MapAntiBacklashMode"/>
@@ -23,5 +26,8 @@
   <Connection Input="1" LocalName=".Offset" Model="CDPPortConnection" Name="MapOffset"/>
   <Connection Input="1" LocalName=".SlaveDroop" Model="CDPPortConnection" Name="MapSlaveDroop"/>
   <Connection Input="1" LocalName=".MasterDroop" Model="CDPPortConnection" Name="MapMasterDroop"/>
+  <Connection Input="1" LocalName=".SlaveDelay" Model="CDPPortConnection" Name="MapSlaveDelay"/>
+  <Connection Input="1" LocalName=".DegreeOffset" Model="CDPPortConnection" Name="MapDegreeOffset"/>
+  <Connection Input="1" LocalName=".DegreeGain" Model="CDPPortConnection" Name="MapDegreeGain"/>
  </Connections>
 </Model>

@@ -81,6 +81,7 @@ void AntiBacklashController::CreateModel()
     RegisterStateProcess("ActualPositionOffset",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessActualPositionOffset,"");
     RegisterStateProcess("SlaveSpeedRefDelay",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessSlaveSpeedRefDelay,"");
     RegisterStateProcess("ConstrainedSlaveAcceleration",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessConstrainedSlaveAcceleration,"");
+    RegisterStateProcess("SimpleTorque",(CDPCOMPONENT_STATEPROCESS)&AntiBacklashController::ProcessSimpleTorque,"");
     RegisterStateTransitionHandler("Null","SpeedCmdOffset",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToSpeedCmdOffset,"");
     RegisterStateTransitionHandler("SpeedCmdOffset","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionSpeedCmdOffsetToNull,"");
     RegisterStateTransitionHandler("Null","AdaptiveTorque",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToAdaptiveTorque,"");
@@ -95,6 +96,8 @@ void AntiBacklashController::CreateModel()
     RegisterStateTransitionHandler("SlaveSpeedRefDelay","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionSlaveSpeedRefDelayToNull,"");
     RegisterStateTransitionHandler("Null","ConstrainedSlaveAcceleration",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToConstrainedSlaveAcceleration,"");
     RegisterStateTransitionHandler("ConstrainedSlaveAcceleration","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionConstrainedSlaveAccelerationToNull,"");
+    RegisterStateTransitionHandler("Null","SimpleTorque",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionNullToSimpleTorque,"");
+    RegisterStateTransitionHandler("SimpleTorque","Null",(CDPCOMPONENT_STATETRANSITIONHANDLER)&AntiBacklashController::TransitionSimpleTorqueToNull,"");
 }
 
 /*!
@@ -147,6 +150,9 @@ void AntiBacklashController::ProcessNull()
             break;
         case 6:
             requestedState = "ConstrainedSlaveAcceleration";
+            break;
+        case 7:
+            requestedState = "SimpleTorque";
             break;
         default:
             requestedState = "Null";
@@ -275,9 +281,9 @@ void AntiBacklashController::ProcessActualPositionOffset()
         slavePosition = double(FC1Position);
     }
 
-    double setPoint = 180;
+    double setPoint = ABParams.DegreeOffset;
     double error = (masterPosition - setPoint) - slavePosition;
-    double kp = 0.001;
+    double kp = ABParams.DegreeGain;
     double pOutput = -kp * (error);
 
     if (SimCmd.AntiBacklashEnabled) {
@@ -303,6 +309,7 @@ void AntiBacklashController::ProcessSlaveSpeedRefDelay()
     double slaveTorque = ABParams.MaxTorque;
     double masterDroop = ABParams.MasterDroop;
     double slaveDroop = ABParams.MasterDroop;
+    double slaveDelay = ABParams.SlaveDelay;
 
     if (SimCmd.AntiBacklashEnabled) {
         speedHistory.push_back(masterSpeed);
@@ -345,6 +352,34 @@ void AntiBacklashController::ProcessConstrainedSlaveAcceleration()
     setMasterSlaveDroop(motorRoles, masterDroop, slaveDroop);
 }
 
+
+
+void AntiBacklashController::ProcessSimpleTorque()
+{
+    if (!SimCmd.EnableFCs) {
+        requestedState = "Null";
+    }
+    scalePlotSignals(motorRoles);
+    chooseMasterSlave(motorRoles, SimCmd.SpeedCMD);
+    double masterSpeed = std::abs(SimCmd.SpeedCMD);
+    double slaveSpeed = -masterSpeed;
+    double masterTorque = ABParams.MaxTorque;
+    double slaveTorque = ABParams.MaxTorque;
+    double masterDroop = ABParams.MasterDroop;
+    double slaveDroop = ABParams.SlaveDroop;
+
+    if (SimCmd.AntiBacklashEnabled) {
+        slaveTorque = ABParams.SlaveTorqueBase;
+        slaveSpeed = masterSpeed;
+    }
+
+    setMasterSlaveSpeed(motorRoles, masterSpeed, slaveSpeed);
+    setMasterSlaveTorque(motorRoles, masterTorque, slaveTorque);
+    setMasterSlaveDroop(motorRoles, masterDroop, slaveDroop);
+}
+
+
+
 // Transition Null -> State
 
 bool AntiBacklashController::TransitionNullToAdaptiveTorque()
@@ -382,6 +417,11 @@ bool AntiBacklashController::TransitionNullToConstrainedSlaveAcceleration()
     return startTestTransition("ConstrainedSlaveAcceleration");
 }
 
+bool AntiBacklashController::TransitionNullToSimpleTorque()
+{
+    return startTestTransition("SimpleTorque");
+}
+
 // Transition State -> Null
 
 bool AntiBacklashController::TransitionAdaptiveTorqueToNull()
@@ -417,6 +457,11 @@ bool AntiBacklashController::TransitionSlaveSpeedRefDelayToNull()
 bool AntiBacklashController::TransitionConstrainedSlaveAccelerationToNull()
 {
     return stopTestTransition("ConstrainedSlaveAcceleration");
+}
+
+bool AntiBacklashController::TransitionSimpleTorqueToNull()
+{
+    return stopTestTransition("SimpleTorque");
 }
 
 bool AntiBacklashController::startTestTransition(const std::string& targetState)

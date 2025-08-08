@@ -26,14 +26,6 @@ public:
 protected:
     ABParamPort ABParams;
     CDPParameter NumTests;
-    CDPParameter GainMin;
-    CDPParameter GainMax;
-    CDPParameter BaseMin;
-    CDPParameter BaseMax;
-    CDPParameter OffsetMin;
-    CDPParameter OffsetMax;
-    CDPParameter DroopMin;
-    CDPParameter DroopMax;
 
     CDPParameter AntiBacklashMode;
     CDPParameter LoadTorqueLimit;
@@ -56,10 +48,18 @@ protected:
     using CDPComponent::requestedState;
     using CDPComponent::ts;
 
-
     int sequence;
     int currentMode;
     int currentParamStep;
+
+    // --- Test Configuration ---
+    static double constexpr GAIN_MIN{1},  GAIN_MAX{5};
+    static double constexpr BASE_MIN{0.5},  BASE_MAX{2.5};
+    static double constexpr OFFSET_MIN{0.25}, OFFSET_MAX{2.5};
+    static double constexpr DROOP_MIN{1.0},  DROOP_MAX{10.0};
+    static double constexpr DEGREE_MIN{230},  DEGREE_MAX{230};
+    static double constexpr GAINDEG_MIN{0.001},  GAINDEG_MAX{0.01};
+    static double constexpr DELAY_MIN{0.5},  DELAY_MAX{1.5};
 };
 
 } // namespace AntiBacklashLib

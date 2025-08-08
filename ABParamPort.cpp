@@ -25,4 +25,7 @@ void ABParamPort::Create(const char* shortName, CDPComponent* parent)
     Offset.Create("Offset", this);
     SlaveDroop.Create("SlaveDroop", this);
     MasterDroop.Create("MasterDroop", this);
+    SlaveDelay.Create("SlaveDelay", this);
+    DegreeOffset.Create("DegreeOffset", this);
+    DegreeGain.Create("DegreeGain", this);
 }

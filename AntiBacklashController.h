@@ -34,6 +34,7 @@ public:
     void ProcessActualPositionOffset();
     void ProcessSlaveSpeedRefDelay();
     void ProcessConstrainedSlaveAcceleration();
+    void ProcessSimpleTorque();
     bool TransitionNullToSpeedCmdOffset();
     bool TransitionSpeedCmdOffsetToNull();
     bool TransitionNullToAdaptiveTorque();
@@ -48,6 +49,8 @@ public:
     bool TransitionSlaveSpeedRefDelayToNull();
     bool TransitionNullToConstrainedSlaveAcceleration();
     bool TransitionConstrainedSlaveAccelerationToNull();
+    bool TransitionNullToSimpleTorque();
+    bool TransitionSimpleTorqueToNull();
 
 protected:
     VaconLib::VaconMarineAppFCPort FC1;
@@ -107,7 +110,6 @@ protected:
     double lastFC2Position;
     double lastFC3Position;
 
-    static double constexpr slaveDelay{0.150};
     std::deque<double> speedHistory;
 
 

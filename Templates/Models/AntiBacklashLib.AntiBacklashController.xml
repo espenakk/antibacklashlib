@@ -93,11 +93,12 @@
   <State Name="SlaveDrooping"/>
   <State Name="ActualPositionOffset"/>
   <State Name="SlaveSpeedRefDelay"/>
-  <State Name="ConstrainedSlaveAcceleration"/>
+  <State Description="" Name="SimpleBacklash"/>
+  <State Description="" Name="SimpleAntiBacklash"/>
  </States>
  <StateTransitions>
-  <StateTransition Description="" FromState="Null" Name="NullToAdaptiveTorque" ToState="AdaptiveTorque"/>
-  <StateTransition Description="" FromState="AdaptiveTorque" Name="AdaptiveTorqueToNull" ToState="Null"/>
+  <StateTransition Description="" FromState="Null" Name="NullToSimpleAntiBacklash" ToState="SimpleAntiBacklash"/>
+  <StateTransition Description="" FromState="SimpleAntiBacklash" Name="SimpleAntiBacklashToNull" ToState="Null"/>
   <StateTransition FromState="Null" Name="NullToRunning" ToState="Running"/>
   <StateTransition FromState="Running" Name="RunningToNull" ToState="Null"/>
   <StateTransition FromState="Null" Name="NullToSpeedTimerTest" ToState="SpeedTimerTest"/>
@@ -112,6 +113,8 @@
   <StateTransition FromState="SlaveSpeedRefDelay" Name="SlaveSpeedRefDelayToNull" ToState="Null"/>
   <StateTransition FromState="Null" Name="NullToConstrainedSlaveAcceleration" ToState="ConstrainedSlaveAcceleration"/>
   <StateTransition FromState="ConstrainedSlaveAcceleration" Name="ConstrainedSlaveAccelerationToNull" ToState="Null"/>
+  <StateTransition FromState="Null" Name="NullToSimpleTorque" ToState="SimpleTorque"/>
+  <StateTransition FromState="SimpleTorque" Name="SimpleTorqueToNull" ToState="Null"/>
  </StateTransitions>
  <Element Description="The Frequency [Hz] that the component statemachine is run at." DisplayHint="Important" Model="PropertyAsElement" Name="fs" Required="1" Type="double" Unit="Hz" Value="100"/>
 </Model>
